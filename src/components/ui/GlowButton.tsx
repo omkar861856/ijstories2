@@ -3,17 +3,28 @@
 import React from "react";
 import { motion } from "framer-motion";
 
-interface GlowButtonProps {
+interface GlowButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
   variant?: "primary" | "secondary";
 }
 
-export default function GlowButton({ children, onClick, className = "", variant = "primary" }: GlowButtonProps) {
+export default function GlowButton({ 
+  children, 
+  className = "", 
+  variant = "primary", 
+  onClick, 
+  type, 
+  disabled,
+  onMouseEnter,
+  onMouseLeave
+}: GlowButtonProps) {
   return (
     <motion.button
+      type={type}
+      disabled={disabled}
       onClick={onClick}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
       whileHover={{ scale: 1.02, y: -2 }}
       whileTap={{ scale: 0.98 }}
       className={`relative px-8 py-3 rounded-full font-black uppercase tracking-[0.25em] text-[9px] overflow-hidden group transition-all duration-500 ${
