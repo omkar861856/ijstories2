@@ -5,13 +5,13 @@ import ThreeDVideoScannerCarousel from "@/components/framer/ThreeDVideoScannerCa
 
 export default function Hero() {
   return (
-    <section className="relative min-h-[140vh] flex flex-col items-center justify-start overflow-hidden bg-black pt-40 pb-20">
+    <section className="relative h-screen flex flex-col items-center justify-start overflow-hidden bg-black pt-32">
       {/* New Title and Subtitle */}
-      <div className="relative z-20 text-center mb-16 px-6">
-        <h2 className="text-4xl md:text-6xl font-black mb-4 tracking-tighter">
-          yourStories, ourVision
+      <div className="relative z-20 text-center mb-10 px-6">
+        <h2 className="text-4xl md:text-6xl font-black mb-2 tracking-tighter">
+          yourStoriesOurVision
         </h2>
-        <p className="text-xl md:text-2xl text-silver font-medium max-w-2xl mx-auto opacity-80">
+        <p className="text-xl md:text-2xl text-silver font-medium max-w-2xl mx-auto opacity-70">
           weHelpYouToBrandYoursel
         </p>
       </div>

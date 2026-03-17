@@ -22,8 +22,7 @@ export default function Work() {
               viewport={{ once: true }}
               className="text-7xl md:text-[8rem] font-black tracking-tight leading-[0.9]"
             >
-              selected <br />
-              <span className="text-silver">works</span>
+              selected<span className="text-silver">Works</span>
             </motion.h2>
           </div>
           <p className="text-silver-100 max-w-sm text-right hidden md:block italic text-[14px] tracking-wide font-medium opacity-70">
