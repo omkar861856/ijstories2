@@ -8,9 +8,17 @@ declare global {
   }
 }
 
+interface SceneRefs {
+  camera: any;
+  scene: any;
+  renderer: any;
+  uniforms: any;
+  animationId: number | null;
+}
+
 export default function ShaderBackground() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const sceneRef = useRef<any>({
+  const sceneRef = useRef<SceneRefs>({
     camera: null,
     scene: null,
     renderer: null,
@@ -18,39 +26,12 @@ export default function ShaderBackground() {
     animationId: null
   });
 
-  useEffect(() => {
-    const existingScript = document.querySelector('script[src="https://cdnjs.cloudflare.com/ajax/libs/three.js/89/three.min.js"]');
-    
-    const initThree = () => {
-      if (containerRef.current && window.THREE) {
-        initThreeJS();
-      }
-    };
-
-    if (!existingScript) {
-      const script = document.createElement("script");
-      script.src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/89/three.min.js";
-      script.onload = initThree;
-      document.head.appendChild(script);
-    } else {
-      initThree();
-    }
-
-    return () => {
-      if (sceneRef.current.animationId) cancelAnimationFrame(sceneRef.current.animationId);
-      if (sceneRef.current.renderer) sceneRef.current.renderer.dispose();
-      // Keep script to avoid reloading if component remounts, but original removed it.
-      // I'll stick to original behavior of cleanup if it was specific.
-    };
-  }, []);
-
   const initThreeJS = () => {
     if (!containerRef.current || !window.THREE) return;
     
     const THREE = window.THREE;
     const container = containerRef.current;
     
-    // Clear previous
     container.innerHTML = "";
 
     const camera = new THREE.Camera();
@@ -59,7 +40,6 @@ export default function ShaderBackground() {
     const scene = new THREE.Scene();
     const geometry = new THREE.PlaneBufferGeometry(2, 2);
 
-    // Params from original fragment shader
     const params = {
       backgroundColor: "#000000",
       colorA: "#ffffff",
@@ -143,7 +123,9 @@ export default function ShaderBackground() {
     sceneRef.current.uniforms = uniforms;
 
     const animate = (t: number) => {
-      sceneRef.current.uniforms.time.value = t / 1000.0;
+      if (sceneRef.current.uniforms) {
+        sceneRef.current.uniforms.time.value = t / 1000.0;
+      }
       renderer.render(scene, camera);
       sceneRef.current.animationId = requestAnimationFrame(animate);
     };
@@ -151,10 +133,38 @@ export default function ShaderBackground() {
 
     const handleResize = () => {
       renderer.setSize(window.innerWidth, window.innerHeight);
-      sceneRef.current.uniforms.resolution.value.set(window.innerWidth, window.innerHeight);
+      if (sceneRef.current.uniforms) {
+        sceneRef.current.uniforms.resolution.value.set(window.innerWidth, window.innerHeight);
+      }
     };
     window.addEventListener('resize', handleResize);
   };
+
+  useEffect(() => {
+    const scriptUrl = "https://cdnjs.cloudflare.com/ajax/libs/three.js/89/three.min.js";
+    const existingScript = document.querySelector(`script[src="${scriptUrl}"]`);
+    
+    const initThree = () => {
+      if (containerRef.current && window.THREE) {
+        initThreeJS();
+      }
+    };
+
+    if (!existingScript) {
+      const script = document.createElement("script");
+      script.src = scriptUrl;
+      script.onload = initThree;
+      document.head.appendChild(script);
+    } else {
+      initThree();
+    }
+
+    const currentScene = sceneRef.current;
+    return () => {
+      if (currentScene.animationId) cancelAnimationFrame(currentScene.animationId);
+      if (currentScene.renderer) currentScene.renderer.dispose();
+    };
+  }, []);
 
   return (
     <div className="fixed inset-0 -z-50 overflow-hidden pointer-events-none bg-black">
