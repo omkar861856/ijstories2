@@ -19,7 +19,7 @@ export default function Hero() {
             Your Stories, Our Vision
           </h2>
           <p className="text-xl md:text-3xl text-silver font-medium max-w-2xl opacity-70 tracking-tight">
-            We Help You To Brand Yoursel
+            We Help You To Brand Yourself
           </p>
           <div className="mt-12 flex space-x-6">
             <GlowButton>View Works</GlowButton>

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/ui/Navbar";
 import SplashScreen from "@/components/ui/SplashScreen";
-import ShaderBackground from "@/components/ui/ShaderBackground";
 import CookieConsent from "@/components/ui/CookieConsent";
 
 export const metadata: Metadata = {
@@ -72,10 +71,10 @@ export default function RootLayout({
         />
       </head>
       <body
+        suppressHydrationWarning
         className="antialiased bg-black text-white font-sans selection:bg-white selection:text-black"
       >
         <SplashScreen />
-        <ShaderBackground />
         <Navbar />
         <main className="relative z-10">{children}</main>
         <CookieConsent />

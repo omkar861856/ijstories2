@@ -31,10 +31,10 @@ export default function ThreeDVideoScannerCarousel() {
   const rafMotion = useRef<number | null>(null);
   const inView = useInView(containerRef, { margin: "240px" });
 
-  const [velocity, setVelocity] = useState(-120);
+  const velocityRef = useRef(-120);
+  const isDeceleratingRef = useRef(false);
   const [isAnimating, setIsAnimating] = useState(true);
   const [isDragging, setIsDragging] = useState(false);
-  const [isDecelerating, setIsDecelerating] = useState(false);
   const [scanningActive, setScanningActive] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -129,28 +129,83 @@ export default function ThreeDVideoScannerCarousel() {
     if (active !== scanningActive) setScanningActive(active);
   }, [scanner.width, scanningActive]);
   useEffect(() => {
-    updateCanvasSizes();
-    window.addEventListener("resize", updateCanvasSizes);
-    return () => window.removeEventListener("resize", updateCanvasSizes);
-  }, [updateCanvasSizes]);
+    if (!inView) return;
 
-  useEffect(() => {
-    if (!inView || !scannerCanvasRef.current || !containerRef.current) return;
-    const canvas = scannerCanvasRef.current;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    const tick = (t: number) => {
+      if (!containerRef.current || !lineRef.current || !scannerCanvasRef.current) return;
+      
+      const canvas = scannerCanvasRef.current;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
 
-    const width = canvas.width;
-    const height = canvas.height;
-    const centerX = width / 2;
-    let glow = 1;
-    let raf = 0;
+      const dt = Math.min((t - lastTimeRef.current) / 1000, 0.1);
+      lastTimeRef.current = t;
 
-    const draw = () => {
+      // 1. Motion Logic
+      if (isAnimating && !isDragging) {
+        const setWidth = (cards.width + cards.gap) * defaultMedia.length;
+        let v = velocityRef.current;
+
+        if (isDeceleratingRef.current) {
+          v *= 0.95;
+          if (Math.abs(v) <= Math.abs(animation.speed)) {
+            v = -Math.abs(animation.speed);
+            isDeceleratingRef.current = false;
+          }
+          velocityRef.current = v;
+        } else {
+          v = -Math.abs(animation.speed);
+        }
+
+        posRef.current += v * dt;
+        if (setWidth > 0) {
+          if (posRef.current <= -setWidth) posRef.current += setWidth;
+          if (posRef.current > 0) posRef.current -= setWidth;
+        }
+        lineRef.current.style.transform = `translateX(${posRef.current}px)`;
+      }
+
+      // 2. Clipping Logic (Manual calculation to avoid layout thrashing)
+      const containerWidth = containerRef.current.offsetWidth;
+      const scannerX = containerWidth / 2;
+      const scannerLeft = scannerX - scanner.width / 2;
+      const scannerRight = scannerX + scanner.width / 2;
+      let isActive = false;
+
+      cardElements.current.forEach(({ clean, scan }, index) => {
+        const setWidth = (cards.width + cards.gap) * defaultMedia.length;
+        let cardLeft = posRef.current + index * (cards.width + cards.gap);
+        
+        if (cardLeft + cards.width < 0) cardLeft += setWidth;
+        if (cardLeft > containerWidth) cardLeft -= setWidth;
+
+        const cardRight = cardLeft + cards.width;
+
+        if (cardLeft < scannerRight && cardRight > scannerLeft) {
+          isActive = true;
+          const intersectLeft = Math.max(scannerLeft - cardLeft, 0);
+          const intersectRight = Math.min(scannerRight - cardLeft, cards.width);
+          const cleanClip = (intersectLeft / cards.width) * 100;
+          const scanClip = (intersectRight / cards.width) * 100;
+          clean.style.setProperty("--clip-right", `${clamp(cleanClip, 0, 100)}%`);
+          scan.style.setProperty("--clip-left", `${clamp(scanClip, 0, 100)}%`);
+        } else if (cardRight < scannerLeft) {
+          clean.style.setProperty("--clip-right", "100%");
+          scan.style.setProperty("--clip-left", "100%");
+        } else {
+          clean.style.setProperty("--clip-right", "0%");
+          scan.style.setProperty("--clip-left", "0%");
+        }
+      });
+
+      if (isActive !== scanningActive) setScanningActive(isActive);
+
+      // 3. Canvas Rendering Logic
+      const width = canvas.width;
+      const height = canvas.height;
+      const centerX = width / 2;
       ctx.clearRect(0, 0, width, height);
       ctx.globalCompositeOperation = "lighter";
-      const targetGlow = scanningActive ? scanner.glow : 1;
-      glow += (targetGlow - glow) * 0.08;
 
       const barGradient = ctx.createLinearGradient(centerX - scanner.width / 2, 0, centerX + scanner.width / 2, 0);
       barGradient.addColorStop(0, "rgba(255,255,255,0)");
@@ -163,7 +218,7 @@ export default function ThreeDVideoScannerCarousel() {
 
       const outer = ctx.createLinearGradient(centerX - scanner.width * 8, 0, centerX + scanner.width * 8, 0);
       outer.addColorStop(0, `rgba(${scannerRgb.r}, ${scannerRgb.g}, ${scannerRgb.b}, 0)`);
-      outer.addColorStop(0.5, `rgba(${scannerRgb.r}, ${scannerRgb.g}, ${scannerRgb.b}, ${0.3 * glow})`);
+      outer.addColorStop(0.5, `rgba(${scannerRgb.r}, ${scannerRgb.g}, ${scannerRgb.b}, 0.3)`);
       outer.addColorStop(1, `rgba(${scannerRgb.r}, ${scannerRgb.g}, ${scannerRgb.b}, 0)`);
 
       ctx.fillStyle = outer;
@@ -179,42 +234,6 @@ export default function ThreeDVideoScannerCarousel() {
       ctx.fillStyle = mask;
       ctx.fillRect(0, 0, width, height);
 
-      raf = requestAnimationFrame(draw);
-    };
-
-    draw();
-    return () => cancelAnimationFrame(raf);
-  }, [inView, scanningActive, scanner.height, scanner.width, scanner.glow, scanner.opacity, scannerRgb]);
-
-  useEffect(() => {
-    if (!inView) return;
-    const tick = (t: number) => {
-      const dt = Math.min((t - lastTimeRef.current) / 1000, 0.1);
-      lastTimeRef.current = t;
-
-      if (isAnimating && !isDragging && containerRef.current) {
-        const setWidth = (cards.width + cards.gap) * defaultMedia.length;
-        let v = velocity;
-
-        if (isDecelerating) {
-          v *= 0.95;
-          if (Math.abs(v) <= Math.abs(animation.speed)) {
-            v = -Math.abs(animation.speed);
-            setIsDecelerating(false);
-          }
-        } else {
-          v = -Math.abs(animation.speed);
-        }
-
-        posRef.current += v * dt;
-        if (setWidth > 0 && posRef.current <= -setWidth) posRef.current += setWidth;
-        
-        if (lineRef.current) {
-          lineRef.current.style.transform = `translateX(${posRef.current}px)`;
-        }
-        setVelocity(v);
-      }
-      updateCardClippingRef();
       rafMotion.current = requestAnimationFrame(tick);
     };
 
@@ -223,7 +242,7 @@ export default function ThreeDVideoScannerCarousel() {
     return () => {
       if (rafMotion.current) cancelAnimationFrame(rafMotion.current);
     };
-  }, [inView, isAnimating, isDragging, isDecelerating, cards.width, cards.gap, animation.speed, velocity, updateCardClippingRef]);
+  }, [inView, isAnimating, isDragging, cards.width, cards.gap, cards.height, scanner.width, scanner.height, scanner.opacity, scannerRgb, scanningActive, animation.speed, displayMedia.length]);
 
   const onMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -236,11 +255,11 @@ export default function ThreeDVideoScannerCarousel() {
   const releaseDrag = useCallback(() => {
     setIsDragging(false);
     if (Math.abs(mouseVelocityRef.current) > Math.abs(animation.speed)) {
-      setVelocity(-Math.abs(mouseVelocityRef.current));
-      setIsDecelerating(true);
+      velocityRef.current = -Math.abs(mouseVelocityRef.current);
+      isDeceleratingRef.current = true;
     } else {
-      setVelocity(-Math.abs(animation.speed));
-      setIsDecelerating(false);
+      velocityRef.current = -Math.abs(animation.speed);
+      isDeceleratingRef.current = false;
     }
     setIsAnimating(true);
   }, [animation.speed]);
@@ -299,6 +318,7 @@ export default function ThreeDVideoScannerCarousel() {
                   alt={`Media ${index}`}
                   fill
                   className="object-cover scale-105"
+                  priority={index < 4}
                 />
               </div>
 
@@ -312,6 +332,7 @@ export default function ThreeDVideoScannerCarousel() {
                   alt={`Media ${index}`}
                   fill
                   className="object-cover grayscale brightness-50"
+                  priority={index < 4}
                 />
                 <div className="absolute inset-0 bg-linear-to-b from-transparent to-black/40" />
               </div>
