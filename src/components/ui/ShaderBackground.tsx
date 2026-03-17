@@ -4,13 +4,16 @@ import React, { useEffect, useRef } from 'react';
 
 declare global {
   interface Window {
-    THREE: unknown;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    THREE: any;
   }
 }
 
 interface SceneRefs {
-  camera: unknown;
-  scene: unknown;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  camera: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  scene: any;
   renderer: { dispose: () => void; render: (scene: any, camera: any) => void } | null;
   uniforms: { [key: string]: { value: any } } | null;
   animationId: number | null;
