@@ -170,13 +170,13 @@ export default function ShaderBackground() {
   }, []);
 
   return (
-    <div className="fixed inset-0 -z-50 overflow-hidden pointer-events-none bg-black">
+    <div className="absolute inset-0 overflow-hidden pointer-events-none bg-black">
       <div 
         ref={containerRef} 
-        className="absolute inset-0 opacity-40" 
+        className="absolute inset-0 opacity-60" 
         style={{ mixBlendMode: 'screen' }}
       />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,black_100%)] opacity-40" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,black_100%)] opacity-30" />
     </div>
   );
 }

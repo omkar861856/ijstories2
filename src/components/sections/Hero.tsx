@@ -3,10 +3,12 @@
 import React from "react";
 import { motion } from "framer-motion";
 import ThreeDVideoScannerCarousel from "@/components/framer/ThreeDVideoScannerCarousel";
+import ShaderBackground from "@/components/ui/ShaderBackground";
 
 export default function Hero() {
   return (
     <section className="relative h-screen flex flex-col items-center justify-center overflow-hidden bg-transparent pt-32">
+      <ShaderBackground />
       {/* Primary Messaging - F-Shaped Pattern Focus */}
       <div className="relative z-20 w-full max-w-7xl mx-auto px-6 text-left mb-12">
         <motion.div

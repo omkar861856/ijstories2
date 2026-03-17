@@ -20,7 +20,6 @@ export default function RootLayout({
         className="antialiased bg-black text-white"
       >
         <SplashScreen />
-        <ShaderBackground />
         <Navbar />
         <main>{children}</main>
       </body>
