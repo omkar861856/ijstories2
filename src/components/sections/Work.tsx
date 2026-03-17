@@ -21,7 +21,7 @@ export default function Work() {
               viewport={{ once: true }}
               className="text-7xl md:text-[8rem] font-black tracking-tight leading-[0.9]"
             >
-              selected<span className="text-silver">Works</span>
+              Selected <span className="text-silver">Works</span>
             </motion.h2>
           </div>
           <p className="text-silver-100 max-w-sm text-right hidden md:block italic text-[14px] tracking-wide font-medium opacity-70">
@@ -48,7 +48,7 @@ export default function Work() {
                   className="object-cover transition-transform duration-1000 group-hover:scale-110 grayscale group-hover:grayscale-0"
                 />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <span className="text-white font-bold border-b border-white uppercase tracking-widest text-xs">viewCaseStudy</span>
+                  <span className="text-white font-bold border-b border-white uppercase tracking-widest text-xs">View Case Study</span>
                 </div>
               </div>
               <div className="flex flex-col">
@@ -56,8 +56,8 @@ export default function Work() {
                   ijStoriesStudio
                 </span>
                 <div className="flex justify-between items-center">
-                  <h3 className="text-3xl font-bold tracking-tight">{project.title.toLowerCase()}</h3>
-                  <span className="text-silver text-[12px] font-black tracking-widest">{project.category.replace(/ /g, "")}</span>
+                  <h3 className="text-3xl font-bold tracking-tight">{project.title}</h3>
+                  <span className="text-silver text-[12px] font-black tracking-widest">{project.category}</span>
                 </div>
               </div>
             </motion.div>

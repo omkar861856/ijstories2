@@ -3,9 +3,9 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 
 const posts = [
-  { date: "Mar 15, 2026", title: "theFutureOfMinimalistDesign", category: "insight", image: "/468333594_18473797480038665_4473156711760818505_n.jpg" },
-  { date: "Mar 08, 2026", title: "masteringSilverGradientsInUI", category: "tutorial", image: "/530210262_18479886634079012_4513169343081986939_n.jpg" },
-  { date: "Feb 28, 2026", title: "whyMotionIsTheNewStandard", category: "perspective", image: "/Image-50.jpg" },
+  { date: "Mar 15, 2026", title: "The Future Of Minimalist Design", category: "Insight", image: "/468333594_18473797480038665_4473156711760818505_n.jpg" },
+  { date: "Mar 08, 2026", title: "Mastering Silver Gradients In UI", category: "Tutorial", image: "/530210262_18479886634079012_4513169343081986939_n.jpg" },
+  { date: "Feb 28, 2026", title: "Why Motion Is The New Standard", category: "Perspective", image: "/Image-50.jpg" },
 ];
 
 export default function Blog() {
@@ -19,7 +19,7 @@ export default function Blog() {
             viewport={{ once: true }}
             className="text-6xl md:text-[7rem] font-black tracking-tight mb-24"
           >
-            the<span className="text-silver">Blog</span>
+            The<span className="text-silver">Blog</span>
           </motion.h2>
           <button className="text-silver-400 hover:text-white transition-colors font-bold uppercase tracking-widest text-xs border-b border-silver-600 pb-1">
             View All

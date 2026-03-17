@@ -7,13 +7,13 @@ import Link from "next/link";
 import Image from "next/image";
 
 const navLinks = [
-  { name: "home", href: "#" },
-  { name: "about", href: "#about" },
-  { name: "services", href: "#services" },
-  { name: "work", href: "#work" },
-  { name: "pricing", href: "#pricing" },
-  { name: "blog", href: "#blog" },
-  { name: "contact", href: "#contact" },
+  { name: "Home", href: "#" },
+  { name: "About", href: "#about" },
+  { name: "Services", href: "#services" },
+  { name: "Work", href: "#work" },
+  { name: "Pricing", href: "#pricing" },
+  { name: "Blog", href: "#blog" },
+  { name: "Contact", href: "#contact" },
 ];
 
 export default function Navbar() {
@@ -34,14 +34,14 @@ export default function Navbar() {
         scrolled ? "bg-black/80 backdrop-blur-md border-b border-white/10" : "bg-transparent"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">
         <Link href="/" className="flex items-center">
           <Image
             src="/ijlogo.png"
             alt="ij.stories logo"
-            width={180}
-            height={60}
-            className="h-14 w-auto object-contain"
+            width={240}
+            height={80}
+            className="h-20 w-auto object-contain"
             priority
           />
         </Link>
@@ -61,7 +61,7 @@ export default function Navbar() {
             href="#contact"
             className="px-8 py-3 bg-white text-black text-sm font-black rounded-full hover:bg-silver-200 transition-colors"
           >
-            getInTouch
+            Get In Touch
           </Link>
         </div>
 

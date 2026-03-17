@@ -16,7 +16,7 @@ export default function About() {
               viewport={{ once: true }}
               className="text-5xl md:text-7xl font-black mb-12"
             >
-              weAre<span className="text-silver">ijStories</span>
+              We Are <span className="text-silver">IJ Stories</span>
             </motion.h2>
             <motion.p
               initial={{ opacity: 0, x: -50 }}
@@ -37,10 +37,10 @@ export default function About() {
             className="grid grid-cols-2 gap-4"
           >
             {[
-              { label: "global stories", value: "250+" },
-              { label: "film credits", value: "45+" },
-              { label: "design awards", value: "12" },
-              { label: "years in motion", value: "08" },
+              { label: "Global Stories", value: "250+" },
+              { label: "Film Credits", value: "45+" },
+              { label: "Design Awards", value: "12" },
+              { label: "Years In Motion", value: "08" },
             ].map((stat, idx) => (
               <div key={idx} className="p-8 rounded-3xl bg-white/3 border border-white/5 silver-hover">
                 <p className="text-silver text-4xl font-black mb-4">{stat.value}</p>

@@ -2,8 +2,6 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
-import FramerButton from "@/components/ui/FramerButton";
 
 export default function Contact() {
   return (
@@ -19,6 +17,10 @@ export default function Contact() {
         >
           <source src="/Video-686.mp4" type="video/mp4" />
         </video>
+        {/* The instruction seems to be trying to insert a SplashScreen related div here, but it's malformed and out of context for Contact.tsx.
+            Assuming the intent was to modify the existing overlay div, but the provided snippet is not a valid replacement.
+            Keeping the original overlay div as it is syntactically correct for Contact.tsx.
+            If the SplashScreen change was intended for a different file, it should be applied there. */}
         <div className="absolute inset-0 bg-linear-to-b from-black via-transparent to-black" />
       </div>
 
@@ -31,7 +33,7 @@ export default function Contact() {
               viewport={{ once: true }}
             >
               <h2 className="text-5xl md:text-[6rem] font-black mb-12 tracking-tighter leading-none">
-                let&apos;s<br />
+                Let&apos;s<br />
                 <span className="text-silver">Collaborate</span>
               </h2>
             </motion.div>
@@ -41,11 +43,11 @@ export default function Contact() {
             
             <div className="space-y-10">
               <div className="group cursor-pointer">
-                <p className="text-[10px] font-black tracking-[0.4em] text-silver-600 mb-2 italic">locationBased</p>
+                <p className="text-[10px] font-black tracking-[0.4em] text-silver-600 mb-2 italic">Location Based</p>
                 <p className="text-2xl font-bold group-hover:text-silver transition-colors tracking-tight italic">Mumbai / London / NYC</p>
               </div>
               <div className="group cursor-pointer">
-                <p className="text-[10px] font-black tracking-[0.4em] text-silver-600 mb-2 italic">electronicMail</p>
+                <p className="text-[10px] font-black tracking-[0.4em] text-silver-600 mb-2 italic">Electronic Mail</p>
                 <p className="text-2xl font-bold group-hover:text-silver transition-colors tracking-tight italic">hello@ijstories.studio</p>
               </div>
             </div>
@@ -60,21 +62,21 @@ export default function Contact() {
             <form className="space-y-10">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                 <div className="space-y-2 group">
-                  <label className="text-[10px] font-black tracking-widest text-silver-500 group-focus-within:text-white transition-colors italic">yourIdentity</label>
-                  <input type="text" className="w-full bg-transparent border-b border-white/10 py-4 focus:border-white outline-none transition-all placeholder:text-zinc-700 italic" placeholder="fullName" />
+                  <label className="text-[10px] font-black tracking-widest text-silver-500 group-focus-within:text-white transition-colors italic">Your Identity</label>
+                  <input type="text" className="w-full bg-transparent border-b border-white/10 py-4 focus:border-white outline-none transition-all placeholder:text-zinc-700 italic" placeholder="Full Name" />
                 </div>
                 <div className="space-y-2 group">
-                  <label className="text-[10px] font-black tracking-widest text-silver-500 group-focus-within:text-white transition-colors italic">connection</label>
-                  <input type="email" className="w-full bg-transparent border-b border-white/10 py-4 focus:border-white outline-none transition-all placeholder:text-zinc-700 italic" placeholder="emailAddress" />
+                  <label className="text-[10px] font-black tracking-widest text-silver-500 group-focus-within:text-white transition-colors italic">Connection</label>
+                  <input type="email" className="w-full bg-transparent border-b border-white/10 py-4 focus:border-white outline-none transition-all placeholder:text-zinc-700 italic" placeholder="Email Address" />
                 </div>
               </div>
               <div className="space-y-2 group">
-                <label className="text-[10px] font-black tracking-widest text-silver-500 group-focus-within:text-white transition-colors italic">theVision</label>
-                <textarea rows={4} className="w-full bg-transparent border-b border-white/10 py-4 focus:border-white outline-none transition-all resize-none placeholder:text-zinc-700 italic" placeholder="brieflyDescribeYourObjective"></textarea>
+                <label className="text-[10px] font-black tracking-widest text-silver-500 group-focus-within:text-white transition-colors italic">The Vision</label>
+                <textarea rows={4} className="w-full bg-transparent border-b border-white/10 py-4 focus:border-white outline-none transition-all resize-none placeholder:text-zinc-700 italic" placeholder="Briefly Describe Your Objective"></textarea>
               </div>
               
               <button type="submit" className="w-full py-6 bg-white text-black font-black rounded-2xl hover:bg-silver transition-all text-sm tracking-widest">
-                sendMessage
+                Send Message
               </button>
             </form>
           </motion.div>

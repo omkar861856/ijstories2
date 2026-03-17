@@ -6,18 +6,18 @@ import { Star } from "lucide-react";
 
 const reviews = [
   {
-    name: "elenaRossi",
-    role: "ceoNexaVision",
+    name: "Elena Rossi",
+    role: "CEO, Nexa Vision",
     content: "The level of artistry and technical precision this agency brings is unparalleled. They didn't just design a site; they captured our soul.",
   },
   {
-    name: "jonathanVance",
-    role: "founderSilverCo",
+    name: "Jonathan Vance",
+    role: "Founder, Silver & Co",
     content: "Minimalist, sleek, and incredibly fast. The black and silver aesthetic they developed for us has become our brand's defining feature.",
   },
   {
-    name: "milaKunis",
-    role: "artDirectorVoidStudios",
+    name: "Mila Kunis",
+    role: "Art Director, Void Studios",
     content: "Incredible attention to detail. Every animation, every pixel was crafted with purpose. A truly premium experience.",
   },
 ];
@@ -32,7 +32,7 @@ export default function Reviews() {
           viewport={{ once: true }}
           className="text-6xl md:text-[7rem] font-black tracking-tight text-center mb-32"
         >
-          client<span className="text-silver">Feedback</span>
+          Client <span className="text-silver">Feedback</span>
         </motion.h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

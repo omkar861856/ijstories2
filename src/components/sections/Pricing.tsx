@@ -39,7 +39,7 @@ export default function Pricing() {
             viewport={{ once: true }}
             className="text-5xl md:text-8xl font-black mb-24 text-center"
           >
-            investment<span className="text-silver">Plans</span>
+            Investment <span className="text-silver">Plans</span>
           </motion.h2>
           <p className="text-silver-400 max-w-xl mx-auto">
             Investment options tailored to your creative ambitions and scale.
@@ -78,7 +78,7 @@ export default function Pricing() {
               <button className={`w-full py-4 rounded-xl font-black tracking-widest text-sm transition-all ${
                 plan.highlight ? "bg-white text-black hover:bg-silver" : "border border-white/20 text-white hover:bg-white/10"
               }`}>
-                choosePlan
+                Choose Plan
               </button>
             </motion.div>
           ))}
