@@ -4,18 +4,23 @@ import React, { useEffect, useRef } from 'react';
 
 declare global {
   interface Window {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     THREE: any;
   }
 }
 
 interface SceneRefs {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   camera: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   scene: any;
-  renderer: { dispose: () => void; render: (scene: any, camera: any) => void } | null;
-  uniforms: { [key: string]: { value: any } } | null;
+  renderer: any;
+  uniforms: {
+    time: { value: number };
+    resolution: { value: { x: number; y: number } | any };
+    mosaicScale: { value: { x: number; y: number } | any };
+    colorIntensity: { value: number };
+    colorA: { value: any };
+    colorB: { value: any };
+    bgColor: { value: any };
+  } | null;
   animationId: number | null;
 }
 
@@ -47,12 +52,12 @@ export default function ShaderBackground() {
       backgroundColor: "#000000",
       colorA: "#ffffff",
       colorB: "#86868b",
-      colorIntensity: 1.2,
-      mosaicScale: { x: 8, y: 8 }
+      colorIntensity: 1.5, // Increased intensity
+      mosaicScale: { x: 4, y: 4 } // Finer mosaic
     };
 
     const uniforms = {
-      time: { type: "f", value: 1.0 },
+      time: { type: "f", value: 0.0 },
       resolution: { type: "v2", value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
       mosaicScale: { type: "v2", value: new THREE.Vector2(params.mosaicScale.x, params.mosaicScale.y) },
       colorIntensity: { type: "f", value: params.colorIntensity },
@@ -83,64 +88,84 @@ export default function ShaderBackground() {
       float random (vec2 st) { return fract(sin(dot(st.xy, vec2(12.9898,78.233)))* 43758.5453123); }
 
       void main(void) {
-        vec2 uv = (gl_FragCoord.xy * 2.0 - resolution.xy) / min(resolution.x, resolution.y);
+        // High quality UV calculation
+        vec2 uv = gl_FragCoord.xy / resolution.xy;
+        float aspect = resolution.x / resolution.y;
+        uv.x *= aspect;
 
-        vec2 fMosaicScal = mosaicScale;
-        vec2 vScreenSize = vec2(256.0,256.0);
+        // Dynamic Mosaic Scaling based on actual resolution
+        vec2 grid = resolution.xy / (mosaicScale * 8.0);
+        uv.x = floor(uv.x * grid.x) / grid.x;
+        uv.y = floor(uv.y * grid.y) / grid.y;
 
-        uv.x = floor(uv.x * vScreenSize.x / fMosaicScal.x) / (vScreenSize.x / fMosaicScal.x);
-        uv.y = floor(uv.y * vScreenSize.y / fMosaicScal.y) / (vScreenSize.y / fMosaicScal.y);
-
-        float t = time * 0.06 + random(uv.x) * 0.4;
-        float lineWidth = 0.0008;
+        // Faster animation for "mesmerizing" feel
+        float t = time * 0.15 + random(uv.x) * 0.4;
+        float lineWidth = 0.0012;
 
         float intensity = 0.0;
         for(int j = 0; j < 3; j++) {
           for(int i = 0; i < 5; i++) {
-            intensity += lineWidth * float(i*i) / abs(fract(t - 0.01*float(j) + float(i)*0.01) - length(uv));
+            // Improved loop for smoother gradients
+            intensity += lineWidth * float(i*i + 1) / abs(fract(t - 0.015*float(j) + float(i)*0.01) - length(uv - 0.5 * vec2(aspect, 1.0)));
           }
         }
 
-        vec3 lineColor = mix(colorA, colorB, 0.5 + 0.5*sin(time*0.5 + uv.x * 3.1415));
-        vec3 finalColor = bgColor + intensity * lineColor * colorIntensity;
+        vec3 lineColor = mix(colorA, colorB, 0.5 + 0.5*sin(time*0.8 + uv.x * PI));
+        vec3 finalColor = bgColor + (intensity * 0.5) * lineColor * colorIntensity;
 
+        // Final color grading
         gl_FragColor = vec4(finalColor, 1.0);
       }
     `;
 
     const material = new THREE.ShaderMaterial({
       uniforms: uniforms,
-      vertexShader: vertexShader,
-      fragmentShader: fragmentShader
+      vertexShader,
+      fragmentShader,
+      transparent: true
     });
 
     const mesh = new THREE.Mesh(geometry, material);
     scene.add(mesh);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setPixelRatio(window.devicePixelRatio);
+    const renderer = new THREE.WebGLRenderer({ 
+      antialias: false, // Better perf for background
+      alpha: true,
+      powerPreference: "high-performance"
+    });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Limit pixel ratio for perf
     renderer.setSize(window.innerWidth, window.innerHeight);
     container.appendChild(renderer.domElement);
 
     sceneRef.current.renderer = renderer;
     sceneRef.current.uniforms = uniforms;
+    sceneRef.current.scene = scene;
+    sceneRef.current.camera = camera;
 
     const animate = (t: number) => {
       if (sceneRef.current.uniforms) {
         sceneRef.current.uniforms.time.value = t / 1000.0;
       }
-      renderer.render(scene, camera);
+      if (sceneRef.current.renderer && sceneRef.current.scene && sceneRef.current.camera) {
+        sceneRef.current.renderer.render(sceneRef.current.scene, sceneRef.current.camera);
+      }
       sceneRef.current.animationId = requestAnimationFrame(animate);
     };
-    animate(0);
+    sceneRef.current.animationId = requestAnimationFrame(animate);
 
     const handleResize = () => {
-      renderer.setSize(window.innerWidth, window.innerHeight);
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      renderer.setSize(width, height);
       if (sceneRef.current.uniforms) {
-        sceneRef.current.uniforms.resolution.value.set(window.innerWidth, window.innerHeight);
+        sceneRef.current.uniforms.resolution.value.set(width, height);
       }
     };
     window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
   };
 
   useEffect(() => {
@@ -165,7 +190,10 @@ export default function ShaderBackground() {
     const currentScene = sceneRef.current;
     return () => {
       if (currentScene.animationId) cancelAnimationFrame(currentScene.animationId);
-      if (currentScene.renderer) currentScene.renderer.dispose();
+      if (currentScene.renderer) {
+        currentScene.renderer.dispose();
+      }
+      // Cleanup geometries and materials if it was more complex, but here simple
     };
   }, []);
 
@@ -173,10 +201,10 @@ export default function ShaderBackground() {
     <div className="absolute inset-0 overflow-hidden pointer-events-none bg-black">
       <div 
         ref={containerRef} 
-        className="absolute inset-0 opacity-60" 
+        className="absolute inset-0 opacity-80" 
         style={{ mixBlendMode: 'screen' }}
       />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,black_100%)] opacity-30" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,black_100%)] opacity-50" />
     </div>
   );
 }
