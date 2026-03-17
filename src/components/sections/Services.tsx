@@ -38,7 +38,7 @@ export default function Services() {
             viewport={{ once: true }}
             className="text-4xl md:text-5xl font-black tracking-tighter mb-6"
           >
-            OUR <span className="text-silver">EXPERTISE</span>
+            Our <span className="text-silver">Expertise</span>
           </motion.h2>
           <p className="text-silver-400 max-w-xl mx-auto">
             We offer a comprehensive suite of creative services designed to elevate your brand to new heights of excellence.

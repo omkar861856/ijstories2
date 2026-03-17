@@ -34,11 +34,11 @@ export default function PolaroidTicker() {
             </div>
             <div className="text-black">
               <h4 className="font-bold text-lg leading-none mb-1">{member.name}</h4>
-              <p className="text-zinc-500 text-xs font-medium uppercase tracking-widest">{member.role}</p>
+              <p className="text-zinc-500 text-xs font-medium tracking-widest">{member.role}</p>
             </div>
             <div className="mt-8 flex justify-between items-center opacity-20">
-               <span className="text-[10px] uppercase font-bold">ij.stories</span>
-               <span className="text-[10px] uppercase font-bold">#2026</span>
+               <span className="text-[10px] font-bold">IJ Stories</span>
+               <span className="text-[10px] font-bold">#2026</span>
             </div>
           </div>
         ))}
