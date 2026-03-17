@@ -4,15 +4,15 @@ import React, { useEffect, useRef } from 'react';
 
 declare global {
   interface Window {
-    THREE: any;
+    THREE: unknown;
   }
 }
 
 interface SceneRefs {
-  camera: any;
-  scene: any;
-  renderer: any;
-  uniforms: any;
+  camera: unknown;
+  scene: unknown;
+  renderer: { dispose: () => void; render: (scene: any, camera: any) => void } | null;
+  uniforms: { [key: string]: { value: any } } | null;
   animationId: number | null;
 }
 
