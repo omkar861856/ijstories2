@@ -22,6 +22,7 @@ export default function Contact() {
         <div className="absolute inset-0 bg-linear-to-b from-black via-transparent to-black" />
       </div>
 
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-20">
           <div className="lg:col-span-5">
             <motion.div
