@@ -5,10 +5,10 @@ import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 
 const services = [
-  { id: "01", title: "Visual Storytelling", desc: "Crafting narratives that resonate through powerful imagery and cinematography." },
-  { id: "02", title: "Premium Branding", desc: "Identity design that defines industry standards and captures the essence of luxury." },
-  { id: "03", title: "Digital Artistry", desc: "Bespoke digital experiences that blend fine art with cutting-edge technology." },
-  { id: "04", title: "Motion Direction", desc: "Translating brand energy into fluid motion graphics and high-impact video." },
+  { id: "01", title: "visualStorytelling", desc: "Crafting narratives that resonate through powerful imagery and cinematography." },
+  { id: "02", title: "premiumBranding", desc: "Identity design that defines industry standards and captures the essence of luxury." },
+  { id: "03", title: "digitalArtistry", desc: "Bespoke digital experiences that blend fine art with cutting-edge technology." },
+  { id: "04", title: "motionDirection", desc: "Translating brand energy into fluid motion graphics and high-impact video." },
 ];
 
 export default function OurServiceSection() {
@@ -17,8 +17,8 @@ export default function OurServiceSection() {
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 mb-20">
           <div>
-            <h2 className="text-5xl md:text-7xl font-black tracking-tighter uppercase mb-8">
-              OUR <span className="text-silver">CRAFT</span>
+            <h2 className="text-5xl md:text-7xl font-black tracking-tighter mb-8">
+              our<span className="text-silver">Craft</span>
             </h2>
           </div>
           <div className="flex flex-col justify-end">
@@ -41,7 +41,7 @@ export default function OurServiceSection() {
                   <ArrowUpRight size={20} />
                 </div>
               </div>
-              <h3 className="text-3xl font-bold mb-4 uppercase tracking-tight">{service.title}</h3>
+              <h3 className="text-3xl font-bold mb-4 tracking-tight">{service.title}</h3>
               <p className="text-silver-400 leading-relaxed max-w-sm">{service.desc}</p>
             </motion.div>
           ))}

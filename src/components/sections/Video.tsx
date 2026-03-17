@@ -28,8 +28,8 @@ export default function Video() {
             </motion.div>
           </div>
           <div className="absolute bottom-16 left-16">
-            <h3 className="text-4xl md:text-7xl font-black tracking-tighter text-white uppercase italic drop-shadow-2xl">
-              THE <span className="text-silver">SHOWREEL</span>
+            <h3 className="text-4xl md:text-7xl font-black tracking-tighter text-white italic drop-shadow-2xl">
+              the<span className="text-silver">Showreel</span>
             </h3>
           </div>
         </div>
@@ -37,7 +37,7 @@ export default function Video() {
         <div className="mt-16 flex flex-col md:flex-row justify-between items-center gap-10">
           <div className="flex gap-4 items-center">
              <div className="w-12 h-px bg-silver-500" />
-             <p className="text-silver-500 uppercase tracking-[0.3em] text-[10px] font-black">ij.stories cinema</p>
+             <p className="text-silver-500 tracking-[0.3em] text-[10px] font-black italic">ijStoriesCinema</p>
           </div>
           <p className="text-silver-400 max-w-lg text-xl italic font-light text-center md:text-right leading-relaxed">
             &quot;Beyond documentation lies the art of storytelling. We don&apos;t just record; we reimagine reality.&quot;

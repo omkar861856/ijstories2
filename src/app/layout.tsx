@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/ui/Navbar";
 import SplashScreen from "@/components/ui/SplashScreen";
+import ShaderBackground from "@/components/ui/ShaderBackground";
 
 export const metadata: Metadata = {
   title: "ij.stories | Premium Art & Design Agency",
@@ -19,6 +20,7 @@ export default function RootLayout({
         className="antialiased bg-black text-white"
       >
         <SplashScreen />
+        <ShaderBackground />
         <Navbar />
         <main>{children}</main>
       </body>

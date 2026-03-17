@@ -1,7 +1,6 @@
-"use client";
-
 import React from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 const projects = [
   { title: "Metamorphic", category: "Exhibition Design", image: "/468333594_18473797480038665_4473156711760818505_n.jpg" },
@@ -40,14 +39,16 @@ export default function Work() {
               transition={{ delay: idx * 0.1, duration: 0.8 }}
               className="group cursor-pointer"
             >
-              <div className="aspect-16/10 overflow-hidden rounded-3xl mb-8 relative silver-border">
-                <img
+              <div className="aspect-[16/10] overflow-hidden rounded-3xl mb-8 relative silver-border bg-zinc-900">
+                <Image
                   src={project.image}
                   alt={project.title}
-                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 grayscale group-hover:grayscale-0"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover transition-transform duration-1000 group-hover:scale-110 grayscale group-hover:grayscale-0"
                 />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <span className="text-white font-bold border-b border-white uppercase tracking-widest text-xs">View Case Study</span>
+                  <span className="text-white font-bold border-b border-white uppercase tracking-widest text-xs">viewCaseStudy</span>
                 </div>
               </div>
               <div className="flex flex-col">

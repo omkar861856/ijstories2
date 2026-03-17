@@ -34,12 +34,12 @@ export default function Pricing() {
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-24">
           <motion.h2
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-4xl md:text-5xl font-black tracking-tighter mb-6"
+            className="text-5xl md:text-8xl font-black mb-24 text-center"
           >
-            TRANSPARENT <span className="text-silver">PRICING</span>
+            investment<span className="text-silver">Plans</span>
           </motion.h2>
           <p className="text-silver-400 max-w-xl mx-auto">
             Investment options tailored to your creative ambitions and scale.
@@ -60,7 +60,7 @@ export default function Pricing() {
                 : "bg-white/2 text-white border-white/10"
               } flex flex-col`}
             >
-              <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
+              <h3 className="text-sm font-black tracking-[0.3em] text-silver mb-4">{plan.name}</h3>
               <div className="text-4xl font-black mb-6">{plan.price}</div>
               <p className={`mb-8 ${plan.highlight ? "text-gray-600" : "text-silver-500"}`}>
                 {plan.desc}
@@ -75,12 +75,10 @@ export default function Pricing() {
                 ))}
               </ul>
 
-              <button className={`w-full py-4 rounded-xl font-bold transition-all ${
-                plan.highlight 
-                ? "bg-black text-white hover:bg-zinc-800" 
-                : "bg-white text-black hover:bg-silver-200"
+              <button className={`w-full py-4 rounded-xl font-black tracking-widest text-sm transition-all ${
+                plan.highlight ? "bg-white text-black hover:bg-silver" : "border border-white/20 text-white hover:bg-white/10"
               }`}>
-                Choose {plan.name}
+                choosePlan
               </button>
             </motion.div>
           ))}

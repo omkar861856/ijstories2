@@ -6,18 +6,18 @@ import { Star } from "lucide-react";
 
 const reviews = [
   {
-    name: "Elena Rossi",
-    role: "CEO, Nexa Vision",
+    name: "elenaRossi",
+    role: "ceoNexaVision",
     content: "The level of artistry and technical precision this agency brings is unparalleled. They didn't just design a site; they captured our soul.",
   },
   {
-    name: "Jonathan Vance",
-    role: "Founder, Silver & Co",
+    name: "jonathanVance",
+    role: "founderSilverCo",
     content: "Minimalist, sleek, and incredibly fast. The black and silver aesthetic they developed for us has become our brand's defining feature.",
   },
   {
-    name: "Mila Kunis",
-    role: "Art Director, Void Studios",
+    name: "milaKunis",
+    role: "artDirectorVoidStudios",
     content: "Incredible attention to detail. Every animation, every pixel was crafted with purpose. A truly premium experience.",
   },
 ];
@@ -54,8 +54,8 @@ export default function Reviews() {
                 &quot;{review.content}&quot;
               </p>
               <div>
-                <h4 className="font-bold text-white tracking-widest text-2xl">{review.name.replace(/ /g, "")}</h4>
-                <p className="text-silver-200 text-sm font-black tracking-widest mt-2">{review.role.replace(/ /g, "")}</p>
+                <h4 className="font-bold text-white tracking-widest text-2xl">{review.name}</h4>
+                <p className="text-silver-200 text-sm font-black tracking-widest mt-2">{review.role}</p>
               </div>
             </motion.div>
           ))}

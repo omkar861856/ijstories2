@@ -1,29 +1,45 @@
 "use client";
 
 import React from "react";
+import { motion } from "framer-motion";
 import ThreeDVideoScannerCarousel from "@/components/framer/ThreeDVideoScannerCarousel";
 
 export default function Hero() {
   return (
-    <section className="relative h-screen flex flex-col items-center justify-start overflow-hidden bg-black pt-32">
-      {/* New Title and Subtitle */}
-      <div className="relative z-20 text-center mb-10 px-6">
-        <h2 className="text-4xl md:text-6xl font-black mb-2 tracking-tighter">
-          yourStoriesOurVision
-        </h2>
-        <p className="text-xl md:text-2xl text-silver font-medium max-w-2xl mx-auto opacity-70">
-          weHelpYouToBrandYoursel
-        </p>
+    <section className="relative h-screen flex flex-col items-center justify-center overflow-hidden bg-transparent pt-32">
+      {/* Primary Messaging - F-Shaped Pattern Focus */}
+      <div className="relative z-20 w-full max-w-7xl mx-auto px-6 text-left mb-12">
+        <motion.div
+           initial={{ opacity: 0, y: 20 }}
+           animate={{ opacity: 1, y: 0 }}
+           transition={{ duration: 0.8 }}
+        >
+          <h2 className="text-5xl md:text-[6rem] font-black mb-4 tracking-tighter leading-none max-w-4xl">
+            yourStoriesOurVision
+          </h2>
+          <p className="text-xl md:text-3xl text-silver font-medium max-w-2xl opacity-70 tracking-tight">
+            weHelpYouToBrandYoursel
+          </p>
+          <div className="mt-12 flex space-x-6">
+            <button className="px-10 py-4 bg-white text-black font-black rounded-full hover:bg-silver transition-all text-sm tracking-widest uppercase">
+              viewWorks
+            </button>
+            <button className="px-10 py-4 border border-white/20 text-white font-black rounded-full hover:bg-white/10 transition-all text-sm tracking-widest uppercase">
+              contactUs
+            </button>
+          </div>
+        </motion.div>
       </div>
 
-      <div className="w-full h-[70vh] relative z-10">
+      {/* Visual Centerpiece (Rule 5) */}
+      <div className="w-full h-[60vh] relative z-10 pointer-events-auto">
         <ThreeDVideoScannerCarousel />
       </div>
 
-      {/* Background/Subtle branding */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none text-center w-full opacity-10">
-        <h1 className="text-[10rem] md:text-[20rem] font-black tracking-tighter italic leading-none">
-          the<span className="text-silver">Portfolio</span>
+      {/* Subtle Background Focal Point */}
+      <div className="absolute top-[20%] left-[5%] z-0 pointer-events-none opacity-5 select-none">
+        <h1 className="text-[15rem] md:text-[30rem] font-black tracking-tighter italic leading-none">
+          thePortfolio
         </h1>
       </div>
       
