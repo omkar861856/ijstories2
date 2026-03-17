@@ -2,209 +2,194 @@
 
 import React, { useEffect, useRef } from 'react';
 
-declare global {
-  interface Window {
-    THREE: any;
+interface OrbProps {
+  starCount: number;
+  starBaseSize: number;
+  starColor: string;
+  starColor2: string;
+  starFuzziness: number;
+}
+
+const GLOBAL_ORB_PROPS: OrbProps = {
+  starCount: 200,
+  starBaseSize: 1.2,
+  starColor: "#ffffff",
+  starColor2: "#86868b",
+  starFuzziness: 4,
+};
+
+class Star {
+  x: number = 0;
+  y: number = 0;
+  size: number = 0;
+  alpha: number = 0;
+  speedX: number = 0;
+  speedY: number = 0;
+  flickerSpeed: number = 0;
+  flickerAngle: number = 0;
+  useSecondaryColor: boolean = false;
+  width: number;
+  height: number;
+
+  constructor(width: number, height: number) {
+    this.width = width;
+    this.height = height;
+    this.flickerAngle = Math.random() * Math.PI * 2;
+    this.reset();
+  }
+
+  reset() {
+    this.x = Math.random() * this.width;
+    this.y = Math.random() * this.height;
+    this.size = Math.random() * GLOBAL_ORB_PROPS.starBaseSize + 0.2;
+    this.alpha = 0;
+    this.useSecondaryColor = Math.random() > 0.6;
+    this.speedX = (Math.random() - 0.5) * 0.05;
+    this.speedY = (Math.random() - 0.5) * 0.05;
+    this.flickerSpeed = Math.random() * 0.01 + 0.002;
+  }
+
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+    this.flickerAngle += this.flickerSpeed;
+    this.alpha = (Math.sin(this.flickerAngle) + 1) / 2;
+
+    if (this.x < 0 || this.x > this.width || this.y < 0 || this.y > this.height) {
+      this.reset();
+    }
+  }
+
+  draw(context: CanvasRenderingContext2D) {
+    context.save();
+    context.globalAlpha = this.alpha * 0.3;
+    context.fillStyle = this.useSecondaryColor ? GLOBAL_ORB_PROPS.starColor2 : GLOBAL_ORB_PROPS.starColor;
+    context.beginPath();
+    context.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    context.fill();
+    context.restore();
   }
 }
 
-interface SceneRefs {
-  camera: any;
-  scene: any;
-  renderer: any;
-  uniforms: {
-    time: { value: number };
-    resolution: { value: { x: number; y: number } | any };
-    mosaicScale: { value: { x: number; y: number } | any };
-    colorIntensity: { value: number };
-    colorA: { value: any };
-    colorB: { value: any };
-    bgColor: { value: any };
-  } | null;
-  animationId: number | null;
+class Orb {
+  x: number = 0;
+  y: number = 0;
+  radius: number = 0;
+  vx: number = 0;
+  vy: number = 0;
+  opacity: number = 0;
+  targetOpacity: number = 0;
+  color: string = "";
+  width: number;
+  height: number;
+
+  constructor(width: number, height: number) {
+    this.width = width;
+    this.height = height;
+    this.reset();
+    this.opacity = Math.random() * 0.05;
+  }
+
+  reset() {
+    this.radius = Math.random() * 800 + 400;
+    this.x = Math.random() * this.width;
+    this.y = Math.random() * this.height;
+    this.vx = (Math.random() - 0.5) * 0.2;
+    this.vy = (Math.random() - 0.5) * 0.2;
+    this.targetOpacity = Math.random() * 0.20 + 0.08;
+    this.color = Math.random() > 0.5 ? "255, 255, 255" : "134, 134, 139";
+  }
+
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    this.opacity += (this.targetOpacity - this.opacity) * 0.01;
+
+    if (this.x < -this.radius) this.x = this.width + this.radius;
+    if (this.x > this.width + this.radius) this.x = -this.radius;
+    if (this.y < -this.radius) this.y = this.height + this.radius;
+    if (this.y > this.height + this.radius) this.y = -this.radius;
+  }
+
+  draw(context: CanvasRenderingContext2D) {
+    const gradient = context.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius);
+    gradient.addColorStop(0, `rgba(${this.color}, ${this.opacity})`);
+    gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+    context.fillStyle = gradient;
+    context.beginPath();
+    context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    context.fill();
+  }
 }
 
 export default function ShaderBackground() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const sceneRef = useRef<SceneRefs>({
-    camera: null,
-    scene: null,
-    renderer: null,
-    uniforms: null,
-    animationId: null
-  });
-
-  const initThreeJS = () => {
-    if (!containerRef.current || !window.THREE) return;
-    
-    const THREE = window.THREE;
-    const container = containerRef.current;
-    
-    container.innerHTML = "";
-
-    const camera = new THREE.Camera();
-    camera.position.z = 1;
-
-    const scene = new THREE.Scene();
-    const geometry = new THREE.PlaneBufferGeometry(2, 2);
-
-    const params = {
-      backgroundColor: "#000000",
-      colorA: "#ffffff",
-      colorB: "#86868b",
-      colorIntensity: 1.5, // Increased intensity
-      mosaicScale: { x: 4, y: 4 } // Finer mosaic
-    };
-
-    const uniforms = {
-      time: { type: "f", value: 0.0 },
-      resolution: { type: "v2", value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
-      mosaicScale: { type: "v2", value: new THREE.Vector2(params.mosaicScale.x, params.mosaicScale.y) },
-      colorIntensity: { type: "f", value: params.colorIntensity },
-      colorA: { type: "v3", value: new THREE.Color(params.colorA) },
-      colorB: { type: "v3", value: new THREE.Color(params.colorB) },
-      bgColor: { type: "v3", value: new THREE.Color(params.backgroundColor) }
-    };
-
-    const vertexShader = `
-      void main() {
-        gl_Position = vec4(position, 1.0);
-      }
-    `;
-
-    const fragmentShader = `
-      #define PI 3.14159265359
-      precision highp float;
-
-      uniform vec2 resolution;
-      uniform float time;
-      uniform vec2 mosaicScale;
-      uniform float colorIntensity;
-      uniform vec3 colorA;
-      uniform vec3 colorB;
-      uniform vec3 bgColor;
-
-      float random (in float x) { return fract(sin(x)*1e4); }
-      float random (vec2 st) { return fract(sin(dot(st.xy, vec2(12.9898,78.233)))* 43758.5453123); }
-
-      void main(void) {
-        // High quality UV calculation
-        vec2 uv = gl_FragCoord.xy / resolution.xy;
-        float aspect = resolution.x / resolution.y;
-        uv.x *= aspect;
-
-        // Dynamic Mosaic Scaling based on actual resolution
-        vec2 grid = resolution.xy / (mosaicScale * 8.0);
-        uv.x = floor(uv.x * grid.x) / grid.x;
-        uv.y = floor(uv.y * grid.y) / grid.y;
-
-        // Faster animation for "mesmerizing" feel
-        float t = time * 0.15 + random(uv.x) * 0.4;
-        float lineWidth = 0.0012;
-
-        float intensity = 0.0;
-        for(int j = 0; j < 3; j++) {
-          for(int i = 0; i < 5; i++) {
-            // Improved loop for smoother gradients
-            intensity += lineWidth * float(i*i + 1) / abs(fract(t - 0.015*float(j) + float(i)*0.01) - length(uv - 0.5 * vec2(aspect, 1.0)));
-          }
-        }
-
-        vec3 lineColor = mix(colorA, colorB, 0.5 + 0.5*sin(time*0.8 + uv.x * PI));
-        vec3 finalColor = bgColor + (intensity * 0.5) * lineColor * colorIntensity;
-
-        // Final color grading
-        gl_FragColor = vec4(finalColor, 1.0);
-      }
-    `;
-
-    const material = new THREE.ShaderMaterial({
-      uniforms: uniforms,
-      vertexShader,
-      fragmentShader,
-      transparent: true
-    });
-
-    const mesh = new THREE.Mesh(geometry, material);
-    scene.add(mesh);
-
-    const renderer = new THREE.WebGLRenderer({ 
-      antialias: false, // Better perf for background
-      alpha: true,
-      powerPreference: "high-performance"
-    });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Limit pixel ratio for perf
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    container.appendChild(renderer.domElement);
-
-    sceneRef.current.renderer = renderer;
-    sceneRef.current.uniforms = uniforms;
-    sceneRef.current.scene = scene;
-    sceneRef.current.camera = camera;
-
-    const animate = (t: number) => {
-      if (sceneRef.current.uniforms) {
-        sceneRef.current.uniforms.time.value = t / 1000.0;
-      }
-      if (sceneRef.current.renderer && sceneRef.current.scene && sceneRef.current.camera) {
-        sceneRef.current.renderer.render(sceneRef.current.scene, sceneRef.current.camera);
-      }
-      sceneRef.current.animationId = requestAnimationFrame(animate);
-    };
-    sceneRef.current.animationId = requestAnimationFrame(animate);
-
-    const handleResize = () => {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-      renderer.setSize(width, height);
-      if (sceneRef.current.uniforms) {
-        sceneRef.current.uniforms.resolution.value.set(width, height);
-      }
-    };
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  };
 
   useEffect(() => {
-    const scriptUrl = "https://cdnjs.cloudflare.com/ajax/libs/three.js/89/three.min.js";
-    const existingScript = document.querySelector(`script[src="${scriptUrl}"]`);
-    
-    const initThree = () => {
-      if (containerRef.current && window.THREE) {
-        initThreeJS();
-      }
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    let stars: Star[] = [];
+    let orbs: Orb[] = [];
+    let animationFrameId: number;
+
+    const initScene = () => {
+      stars = [];
+      orbs = [];
+      for (let i = 0; i < 300; i++) stars.push(new Star(width, height));
+      for (let i = 0; i < 12; i++) orbs.push(new Orb(width, height));
     };
 
-    if (!existingScript) {
-      const script = document.createElement("script");
-      script.src = scriptUrl;
-      script.onload = initThree;
-      document.head.appendChild(script);
-    } else {
-      initThree();
-    }
+    const resize = () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      ctx.scale(dpr, dpr);
+      initScene();
+    };
 
-    const currentScene = sceneRef.current;
+    const animate = () => {
+      const bgGrad = ctx.createLinearGradient(0, 0, 0, height);
+      bgGrad.addColorStop(0, "#000000");
+      bgGrad.addColorStop(1, "#000000");
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, width, height);
+      
+      stars.forEach(star => {
+        star.update();
+        star.draw(ctx);
+      });
+
+      orbs.forEach(orb => {
+        orb.update();
+        orb.draw(ctx);
+      });
+
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    window.addEventListener('resize', resize);
+    resize();
+    animate();
+
     return () => {
-      if (currentScene.animationId) cancelAnimationFrame(currentScene.animationId);
-      if (currentScene.renderer) {
-        currentScene.renderer.dispose();
-      }
-      // Cleanup geometries and materials if it was more complex, but here simple
+      window.removeEventListener('resize', resize);
+      cancelAnimationFrame(animationFrameId);
     };
   }, []);
 
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none bg-black">
-      <div 
-        ref={containerRef} 
-        className="absolute inset-0 opacity-80" 
-        style={{ mixBlendMode: 'screen' }}
-      />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,black_100%)] opacity-50" />
+    <div ref={containerRef} className="fixed inset-0 -z-50 pointer-events-none bg-black overflow-hidden">
+      <canvas ref={canvasRef} className="block w-full h-full" />
     </div>
   );
 }

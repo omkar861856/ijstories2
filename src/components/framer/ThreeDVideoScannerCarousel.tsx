@@ -2,27 +2,12 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useInView } from "framer-motion";
+import Image from "next/image";
 
 function clamp(n: number, min: number, max: number) {
   return Math.max(min, Math.min(max, n));
 }
 
-function hexToRgb(color: string) {
-  const clean = (color || "").replace("#", "").trim();
-  if (clean.length === 3) {
-    const r = parseInt(clean[0] + clean[0], 16);
-    const g = parseInt(clean[1] + clean[1], 16);
-    const b = parseInt(clean[2] + clean[2], 16);
-    return { r, g, b };
-  }
-  if (clean.length === 6) {
-    const r = parseInt(clean.slice(0, 2), 16);
-    const g = parseInt(clean.slice(2, 4), 16);
-    const b = parseInt(clean.slice(4, 6), 16);
-    return { r, g, b };
-  }
-  return { r: 255, g: 255, b: 255 };
-}
 
 interface MediaItem {
   type: "image" | "video";
@@ -46,7 +31,6 @@ export default function ThreeDVideoScannerCarousel() {
   const rafMotion = useRef<number | null>(null);
   const inView = useInView(containerRef, { margin: "240px" });
 
-  const [position, setPosition] = useState(0);
   const [velocity, setVelocity] = useState(-120);
   const [isAnimating, setIsAnimating] = useState(true);
   const [isDragging, setIsDragging] = useState(false);
@@ -99,24 +83,32 @@ export default function ThreeDVideoScannerCarousel() {
     }
   }, [scanner.height]);
 
-  const updateCardClipping = useCallback(() => {
-    if (typeof window === "undefined" || !containerRef.current || !lineRef.current) return;
+  const posRef = useRef(0);
+  const cardElements = useRef<{ card: HTMLElement, clean: HTMLElement, scan: HTMLElement }[]>([]);
+
+  useEffect(() => {
+    if (!lineRef.current) return;
+    const cards = lineRef.current.querySelectorAll(".vcs-card");
+    cardElements.current = Array.from(cards).map(card => ({
+      card: card as HTMLElement,
+      clean: card.querySelector(".vcs-media-clean") as HTMLElement,
+      scan: card.querySelector(".vcs-media-scan") as HTMLElement
+    }));
+  }, [displayMedia]);
+
+  const updateCardClippingRef = useCallback(() => {
+    if (!containerRef.current || !lineRef.current) return;
     const containerRect = containerRef.current.getBoundingClientRect();
     const scannerX = containerRect.width / 2;
     const scannerLeft = scannerX - scanner.width / 2;
     const scannerRight = scannerX + scanner.width / 2;
     let active = false;
 
-    const wrappers = lineRef.current.querySelectorAll(".vcs-card");
-    wrappers.forEach((wrapper) => {
-      const card = wrapper as HTMLElement;
+    cardElements.current.forEach(({ card, clean, scan }) => {
       const rect = card.getBoundingClientRect();
       const cardLeft = rect.left - containerRect.left;
       const cardRight = rect.right - containerRect.left;
       const cardWidth = rect.width || 1;
-
-      const clean = card.querySelector(".vcs-media-clean") as HTMLElement;
-      const scan = card.querySelector(".vcs-media-scan") as HTMLElement;
 
       if (cardLeft < scannerRight && cardRight > scannerLeft) {
         active = true;
@@ -124,19 +116,18 @@ export default function ThreeDVideoScannerCarousel() {
         const intersectRight = Math.min(scannerRight - cardLeft, cardWidth);
         const cleanClip = (intersectLeft / cardWidth) * 100;
         const scanClip = (intersectRight / cardWidth) * 100;
-        clean?.style.setProperty("--clip-right", `${clamp(cleanClip, 0, 100)}%`);
-        scan?.style.setProperty("--clip-left", `${clamp(scanClip, 0, 100)}%`);
+        clean.style.setProperty("--clip-right", `${clamp(cleanClip, 0, 100)}%`);
+        scan.style.setProperty("--clip-left", `${clamp(scanClip, 0, 100)}%`);
       } else if (cardRight < scannerLeft) {
-        clean?.style.setProperty("--clip-right", "100%");
-        scan?.style.setProperty("--clip-left", "100%");
+        clean.style.setProperty("--clip-right", "100%");
+        scan.style.setProperty("--clip-left", "100%");
       } else {
-        clean?.style.setProperty("--clip-right", "0%");
-        scan?.style.setProperty("--clip-left", "0%");
+        clean.style.setProperty("--clip-right", "0%");
+        scan.style.setProperty("--clip-left", "0%");
       }
     });
-    setScanningActive(active);
-  }, [scanner.width]);
-
+    if (active !== scanningActive) setScanningActive(active);
+  }, [scanner.width, scanningActive]);
   useEffect(() => {
     updateCanvasSizes();
     window.addEventListener("resize", updateCanvasSizes);
@@ -198,30 +189,32 @@ export default function ThreeDVideoScannerCarousel() {
   useEffect(() => {
     if (!inView) return;
     const tick = (t: number) => {
-      const dt = (t - lastTimeRef.current) / 1000;
+      const dt = Math.min((t - lastTimeRef.current) / 1000, 0.1);
       lastTimeRef.current = t;
 
       if (isAnimating && !isDragging && containerRef.current) {
         const setWidth = (cards.width + cards.gap) * defaultMedia.length;
-        let nextVelocity = velocity;
+        let v = velocity;
 
         if (isDecelerating) {
-          nextVelocity *= 0.95;
-          if (Math.abs(nextVelocity) <= Math.abs(animation.speed)) {
-            nextVelocity = -Math.abs(animation.speed);
+          v *= 0.95;
+          if (Math.abs(v) <= Math.abs(animation.speed)) {
+            v = -Math.abs(animation.speed);
             setIsDecelerating(false);
           }
         } else {
-          nextVelocity = -Math.abs(animation.speed);
+          v = -Math.abs(animation.speed);
         }
 
-        let nextPosition = position + nextVelocity * dt;
-        if (setWidth > 0 && nextPosition <= -setWidth) nextPosition += setWidth;
+        posRef.current += v * dt;
+        if (setWidth > 0 && posRef.current <= -setWidth) posRef.current += setWidth;
         
-        setPosition(nextPosition);
-        setVelocity(nextVelocity);
+        if (lineRef.current) {
+          lineRef.current.style.transform = `translateX(${posRef.current}px)`;
+        }
+        setVelocity(v);
       }
-      updateCardClipping();
+      updateCardClippingRef();
       rafMotion.current = requestAnimationFrame(tick);
     };
 
@@ -230,7 +223,7 @@ export default function ThreeDVideoScannerCarousel() {
     return () => {
       if (rafMotion.current) cancelAnimationFrame(rafMotion.current);
     };
-  }, [inView, isAnimating, isDragging, isDecelerating, position, velocity, cards.width, cards.gap, animation.speed, updateCardClipping]);
+  }, [inView, isAnimating, isDragging, isDecelerating, cards.width, cards.gap, animation.speed, velocity, updateCardClippingRef]);
 
   const onMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -256,7 +249,10 @@ export default function ThreeDVideoScannerCarousel() {
     if (!isDragging) return;
     const move = (e: MouseEvent) => {
       const dx = e.clientX - lastMouseXRef.current;
-      setPosition((prev) => prev + dx * interaction.dragSensitivity);
+      posRef.current += dx * interaction.dragSensitivity;
+      if (lineRef.current) {
+        lineRef.current.style.transform = `translateX(${posRef.current}px)`;
+      }
       mouseVelocityRef.current = Math.abs(dx * 60 * interaction.dragSensitivity);
       lastMouseXRef.current = e.clientX;
     };
@@ -274,24 +270,19 @@ export default function ThreeDVideoScannerCarousel() {
       ref={containerRef} 
       className="relative w-full h-full flex items-center justify-center overflow-hidden bg-transparent"
     >
-      <div className="absolute inset-0 pointer-events-none z-10" 
-           style={{ background: `radial-gradient(circle at 50% 50%, rgba(${scannerRgb.r}, ${scannerRgb.g}, ${scannerRgb.b}, 0.05) 0%, transparent 70%)` }} 
-      />
-
       <div className="absolute w-full flex items-center overflow-visible z-20" style={{ height: cards.height }}>
         <div
           ref={lineRef}
           onMouseDown={onMouseDown}
           className="flex items-center gap-[60px] whitespace-nowrap select-none will-change-transform"
           style={{ 
-            transform: `translateX(${position}px)`,
             cursor: isDragging ? "grabbing" : "grab"
           }}
         >
           {displayMedia.map((item, index) => (
             <div
               key={index}
-              className="vcs-card shrink-0 relative overflow-hidden bg-zinc-900 shadow-2xl"
+              className="vcs-card shrink-0 relative overflow-hidden bg-white/5 border border-white/10 shadow-2xl backdrop-blur-sm"
               style={{
                 width: cards.width,
                 height: cards.height,
@@ -303,10 +294,11 @@ export default function ThreeDVideoScannerCarousel() {
                 className="vcs-media-clean absolute inset-0 z-20"
                 style={{ clipPath: "inset(0 0 0 var(--clip-right, 0%))" }}
               >
-                <img
+                <Image
                   src={item.src}
                   alt={`Media ${index}`}
-                  className="w-full h-full object-cover scale-105"
+                  fill
+                  className="object-cover scale-105"
                 />
               </div>
 
@@ -315,10 +307,11 @@ export default function ThreeDVideoScannerCarousel() {
                 className="vcs-media-scan absolute inset-0 z-10"
                 style={{ clipPath: "inset(0 calc(100% - var(--clip-left, 0%)) 0 0)" }}
               >
-                <img
+                <Image
                   src={item.src}
                   alt={`Media ${index}`}
-                  className="w-full h-full object-cover grayscale brightness-50"
+                  fill
+                  className="object-cover grayscale brightness-50"
                 />
                 <div className="absolute inset-0 bg-linear-to-b from-transparent to-black/40" />
               </div>

@@ -29,7 +29,7 @@ const services = [
 
 export default function Services() {
   return (
-    <section id="services" className="py-32 bg-[#050505]">
+    <section id="services" className="py-32 bg-transparent">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-24">
           <motion.h2
@@ -59,7 +59,7 @@ export default function Services() {
                 {service.icon}
               </div>
               <h3 className="text-2xl font-bold mb-4">{service.title}</h3>
-              <p className="text-silver-400 leading-relaxed italic">
+              <p className="text-silver-400 leading-relaxed">
                 {service.desc}
               </p>
             </motion.div>

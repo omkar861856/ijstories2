@@ -28,9 +28,11 @@ const plans = [
   },
 ];
 
+import GlowButton from "@/components/ui/GlowButton";
+
 export default function Pricing() {
   return (
-    <section id="pricing" className="py-32 bg-black border-y border-white/5">
+    <section id="pricing" className="py-32 bg-transparent border-y border-white/5">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-24">
           <motion.h2
@@ -56,30 +58,27 @@ export default function Pricing() {
               transition={{ delay: idx * 0.1 }}
               className={`p-10 rounded-3xl border ${
                 plan.highlight 
-                ? "bg-white text-black border-white" 
-                : "bg-white/2 text-white border-white/10"
-              } flex flex-col`}
+                ? "bg-zinc-900 border-white/20" 
+                : "bg-white/2 border-white/10"
+              } text-white flex flex-col`}
             >
               <h3 className="text-sm font-black tracking-[0.3em] text-silver mb-4">{plan.name}</h3>
-              <div className="text-4xl font-black mb-6">{plan.price}</div>
-              <p className={`mb-8 ${plan.highlight ? "text-gray-600" : "text-silver-500"}`}>
-                {plan.desc}
-              </p>
-              
-              <ul className="space-y-4 mb-12 grow">
-                {plan.features.map((feature) => (
-                  <li key={feature} className="flex items-center gap-3">
-                    <Check size={18} className={plan.highlight ? "text-black" : "text-silver"} />
+                <p className="text-silver-400 text-sm mb-8 font-medium">Starting from</p>
+                <div className="flex items-baseline gap-2 mb-10">
+                  <span className="text-5xl font-black">{plan.price}</span>
+                </div>
+                <ul className="space-y-6 mb-12">
+                  {plan.features.map((feature, i) => (
+                    <li key={i} className="flex items-center gap-4 text-silver-300 text-sm">
+                    <Check size={18} className="text-silver" />
                     <span className="text-sm font-medium">{feature}</span>
                   </li>
                 ))}
               </ul>
 
-              <button className={`w-full py-4 rounded-xl font-black tracking-widest text-sm transition-all ${
-                plan.highlight ? "bg-white text-black hover:bg-silver" : "border border-white/20 text-white hover:bg-white/10"
-              }`}>
+              <GlowButton variant={plan.highlight ? "primary" : "secondary"} className="w-full">
                 Choose Plan
-              </button>
+              </GlowButton>
             </motion.div>
           ))}
         </div>

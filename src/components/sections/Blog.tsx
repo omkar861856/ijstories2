@@ -2,17 +2,13 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import { blogPosts } from "@/data/site-data";
+import Link from "next/link";
 import Image from "next/image";
-
-const posts = [
-  { date: "Mar 15, 2026", title: "The Future Of Minimalist Design", category: "Insight", image: "/468333594_18473797480038665_4473156711760818505_n.jpg" },
-  { date: "Mar 08, 2026", title: "Mastering Silver Gradients In UI", category: "Tutorial", image: "/530210262_18479886634079012_4513169343081986939_n.jpg" },
-  { date: "Feb 28, 2026", title: "Why Motion Is The New Standard", category: "Perspective", image: "/Image-50.jpg" },
-];
 
 export default function Blog() {
   return (
-    <section id="blog" className="py-32 bg-[#050505]">
+    <section id="blog" className="py-32 bg-transparent">
       <div className="max-w-7xl mx-auto px-6">
         <div className="mb-24 flex justify-between items-center">
           <motion.h2
@@ -28,34 +24,34 @@ export default function Blog() {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {posts.map((post, idx) => (
-            <motion.div
-              key={post.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: idx * 0.1 }}
-              className="group cursor-pointer"
-            >
-              <div className="aspect-video overflow-hidden rounded-2xl mb-8 relative bg-zinc-900 silver-border">
-                <Image
-                  src={post.image}
-                  alt={post.title}
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-              </div>
-              <div className="flex items-center gap-8 mb-4">
-                <span className="text-silver-500 font-mono text-sm">{post.date}</span>
-                <span className="px-3 py-1 border border-white/10 rounded-full text-[10px] font-black text-silver-400">
-                  {post.category}
-                </span>
-              </div>
-              <h3 className="text-2xl md:text-3xl font-bold text-white group-hover:text-silver transition-colors flex items-center gap-2">
-                {post.title} <span className="text-silver text-2xl opacity-0 group-hover:opacity-100 transition-opacity">→</span>
-              </h3>
-            </motion.div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+          {blogPosts.map((post, idx) => (
+            <Link key={post.slug} href={`/blog/${post.slug}`}>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1 }}
+                className="group cursor-pointer"
+              >
+                <div className="aspect-video overflow-hidden rounded-4xl mb-8 border border-white/10 relative">
+                  <Image
+                    src={post.image}
+                    alt={post.title}
+                    fill
+                    className="object-cover transition-all duration-700 grayscale group-hover:grayscale-0 group-hover:scale-105"
+                  />
+                </div>
+                <div className="flex items-center gap-4 mb-4">
+                  <span className="text-[10px] font-black tracking-widest text-silver uppercase">{post.category}</span>
+                  <div className="w-8 h-px bg-white/10" />
+                  <span className="text-[10px] font-bold text-zinc-500 uppercase">{post.date}</span>
+                </div>
+                <h3 className="text-3xl font-bold tracking-tight group-hover:text-silver transition-colors leading-tight">
+                  {post.title}
+                </h3>
+              </motion.div>
+            </Link>
           ))}
         </div>
       </div>

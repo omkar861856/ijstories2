@@ -16,6 +16,8 @@ const navLinks = [
   { name: "Contact", href: "#contact" },
 ];
 
+import GlowButton from "@/components/ui/GlowButton";
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -30,44 +32,48 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        scrolled ? "bg-black/80 backdrop-blur-md border-b border-white/10" : "bg-transparent"
+      className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 w-[95%] max-w-5xl ${
+        scrolled ? "py-1" : "py-2"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">
-        <Link href="/" className="flex items-center">
+      <div 
+        className={`flex items-center justify-between px-6 py-2 rounded-full border border-white/10 backdrop-blur-xl transition-all duration-500 ${
+          scrolled ? "bg-black/60 shadow-2xl" : "bg-white/5"
+        }`}
+      >
+        <Link href="/" className="flex items-center overflow-visible">
           <Image
             src="/ijlogo.png"
             alt="ij.stories logo"
             width={240}
-            height={80}
-            className="h-20 w-auto object-contain"
+            height={60}
+            className="h-10 md:h-12 w-auto object-contain brightness-110 scale-x-110 origin-left"
             priority
           />
         </Link>
 
         {/* Desktop Nav */}
-        <div className="hidden md:flex items-center space-x-8">
+        <div className="hidden md:flex items-center space-x-6 lg:space-x-10">
           {navLinks.map((link) => (
             <Link
               key={link.name}
               href={link.href}
-              className="text-lg font-bold text-silver-400 hover:text-silver transition-all tracking-widest px-2"
+              className="text-[10px] font-black uppercase tracking-[0.3em] text-silver-400 hover:text-white transition-all"
             >
               {link.name}
             </Link>
           ))}
-          <Link
-            href="#contact"
-            className="px-8 py-3 bg-white text-black text-sm font-black rounded-full hover:bg-silver-200 transition-colors"
-          >
-            Get In Touch
+          <Link href="#contact">
+            <GlowButton className="px-6! py-2! text-[9px]!">Connect</GlowButton>
           </Link>
         </div>
 
         {/* Mobile Toggle */}
-        <button className="md:hidden text-white" onClick={() => setIsOpen(!isOpen)}>
-          {isOpen ? <X size={28} /> : <Menu size={28} />}
+        <button 
+          className="md:hidden text-white p-2 hover:bg-white/5 rounded-full transition-colors" 
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          {isOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
       </div>
 
@@ -75,17 +81,17 @@ export default function Navbar() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="absolute top-20 left-0 w-full bg-black border-b border-white/10 p-6 md:hidden"
+            initial={{ opacity: 0, scale: 0.95, y: -10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: -10 }}
+            className="absolute top-full left-0 right-0 mt-4 bg-black/90 backdrop-blur-2xl rounded-3xl border border-white/10 p-8 md:hidden shadow-3xl"
           >
-            <div className="flex flex-col space-y-6">
+            <div className="flex flex-col space-y-8 text-center">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
                   href={link.href}
-                  className="text-xl font-medium text-silver-400"
+                  className="text-[12px] font-black uppercase tracking-[0.4em] text-silver-400 hover:text-white"
                   onClick={() => setIsOpen(false)}
                 >
                   {link.name}
@@ -93,10 +99,10 @@ export default function Navbar() {
               ))}
               <Link
                 href="#contact"
-                className="w-full py-4 bg-white text-black text-center font-bold rounded-xl"
+                className="w-full py-4 bg-white text-black text-center text-xs font-black uppercase tracking-widest rounded-2xl"
                 onClick={() => setIsOpen(false)}
               >
-                Get in Touch
+                Join Us
               </Link>
             </div>
           </motion.div>

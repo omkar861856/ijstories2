@@ -24,7 +24,7 @@ const reviews = [
 
 export default function Reviews() {
   return (
-    <section id="reviews" className="py-32 bg-black">
+    <section id="reviews" className="py-32 bg-transparent">
       <div className="max-w-7xl mx-auto px-6">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
@@ -35,31 +35,39 @@ export default function Reviews() {
           Client <span className="text-silver">Feedback</span>
         </motion.h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {reviews.map((review, idx) => (
-            <motion.div
-              key={review.name}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: idx * 0.1 }}
-              className="p-10 rounded-3xl bg-white/3 border border-white/5 relative"
-            >
-              <div className="flex gap-1 mb-6 text-silver">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={16} fill="currentColor" />
-                ))}
+      <div className="overflow-hidden py-10">
+        <div className="flex whitespace-nowrap">
+          <motion.div
+            animate={{ x: [0, -1200] }}
+            transition={{
+              duration: 30,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+            className="flex gap-8 pr-8"
+          >
+            {reviews.concat(reviews).map((review, idx) => (
+              <div
+                key={idx}
+                className="w-[400px] shrink-0 p-10 rounded-3xl bg-zinc-900 border border-white/5 relative whitespace-normal"
+              >
+                <div className="flex gap-1 mb-6 text-silver">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} size={16} fill="currentColor" />
+                  ))}
+                </div>
+                <p className="text-white/80 text-xl mb-10 leading-relaxed font-light">
+                  &quot;{review.content}&quot;
+                </p>
+                <div>
+                  <h4 className="font-bold text-white tracking-widest text-2xl">{review.name}</h4>
+                  <p className="text-silver-200 text-sm font-black tracking-widest mt-2">{review.role}</p>
+                </div>
               </div>
-              <p className="text-white/80 text-xl italic mb-10 leading-relaxed font-light">
-                &quot;{review.content}&quot;
-              </p>
-              <div>
-                <h4 className="font-bold text-white tracking-widest text-2xl">{review.name}</h4>
-                <p className="text-silver-200 text-sm font-black tracking-widest mt-2">{review.role}</p>
-              </div>
-            </motion.div>
-          ))}
+            ))}
+          </motion.div>
         </div>
+      </div>
       </div>
     </section>
   );

@@ -7,16 +7,16 @@ import Image from "next/image";
 
 export default function Footer() {
   return (
-    <footer className="bg-black border-t border-white/10 py-20">
+    <footer className="bg-transparent border-t border-white/5 py-20">
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12">
         <div className="col-span-1 md:col-span-2">
-          <Link href="/" className="mb-6 block">
+          <Link href="/" className="mb-6 block overflow-visible">
             <Image
               src="/ijlogo.png"
               alt="ij.stories logo"
-              width={150}
-              height={50}
-              className="h-12 w-auto object-contain"
+              width={250}
+              height={80}
+              className="h-12 w-auto object-contain scale-x-115 origin-left brightness-110"
             />
           </Link>
           <p className="text-silver-400 text-lg max-w-sm">

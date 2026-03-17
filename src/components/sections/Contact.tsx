@@ -2,10 +2,11 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import GlowButton from "@/components/ui/GlowButton";
 
 export default function Contact() {
   return (
-    <section id="contact" className="relative py-40 bg-black overflow-hidden">
+    <section id="contact" className="relative py-40 bg-transparent overflow-hidden">
       {/* Background Video */}
       <div className="absolute inset-0 z-0 opacity-20">
         <video 
@@ -37,18 +38,18 @@ export default function Contact() {
                 <span className="text-silver">Collaborate</span>
               </h2>
             </motion.div>
-            <p className="text-silver-400 text-xl max-w-md mb-12 font-light italic">
+            <p className="text-silver-400 text-xl max-w-md mb-12 font-light">
               We&apos;re currently accepting select commissions for 2026. Let&apos;s co-create a legacy that echoes.
             </p>
             
             <div className="space-y-10">
               <div className="group cursor-pointer">
-                <p className="text-[10px] font-black tracking-[0.4em] text-silver-600 mb-2 italic">Location Based</p>
-                <p className="text-2xl font-bold group-hover:text-silver transition-colors tracking-tight italic">Mumbai / London / NYC</p>
+                <p className="text-[10px] font-black tracking-[0.4em] text-silver-600 mb-2">Location Based</p>
+                <p className="text-2xl font-bold group-hover:text-silver transition-colors tracking-tight">Mumbai / London / NYC</p>
               </div>
               <div className="group cursor-pointer">
-                <p className="text-[10px] font-black tracking-[0.4em] text-silver-600 mb-2 italic">Electronic Mail</p>
-                <p className="text-2xl font-bold group-hover:text-silver transition-colors tracking-tight italic">hello@ijstories.studio</p>
+                <p className="text-[10px] font-black tracking-[0.4em] text-silver-600 mb-2">Electronic Mail</p>
+                <p className="text-2xl font-bold group-hover:text-silver transition-colors tracking-tight">hello@ijstories.studio</p>
               </div>
             </div>
           </div>
@@ -62,22 +63,22 @@ export default function Contact() {
             <form className="space-y-10">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                 <div className="space-y-2 group">
-                  <label className="text-[10px] font-black tracking-widest text-silver-500 group-focus-within:text-white transition-colors italic">Your Identity</label>
-                  <input type="text" className="w-full bg-transparent border-b border-white/10 py-4 focus:border-white outline-none transition-all placeholder:text-zinc-700 italic" placeholder="Full Name" />
+                  <label className="text-[10px] font-black tracking-widest text-silver-500 group-focus-within:text-white transition-colors">Your Identity</label>
+                  <input type="text" className="w-full bg-transparent border-b border-white/10 py-4 focus:border-white outline-none transition-all placeholder:text-zinc-700" placeholder="Full Name" />
                 </div>
                 <div className="space-y-2 group">
-                  <label className="text-[10px] font-black tracking-widest text-silver-500 group-focus-within:text-white transition-colors italic">Connection</label>
-                  <input type="email" className="w-full bg-transparent border-b border-white/10 py-4 focus:border-white outline-none transition-all placeholder:text-zinc-700 italic" placeholder="Email Address" />
+                  <label className="text-[10px] font-black tracking-widest text-silver-500 group-focus-within:text-white transition-colors">Connection</label>
+                  <input type="email" className="w-full bg-transparent border-b border-white/10 py-4 focus:border-white outline-none transition-all placeholder:text-zinc-700" placeholder="Email Address" />
                 </div>
               </div>
               <div className="space-y-2 group">
-                <label className="text-[10px] font-black tracking-widest text-silver-500 group-focus-within:text-white transition-colors italic">The Vision</label>
-                <textarea rows={4} className="w-full bg-transparent border-b border-white/10 py-4 focus:border-white outline-none transition-all resize-none placeholder:text-zinc-700 italic" placeholder="Briefly Describe Your Objective"></textarea>
+                <label className="text-[10px] font-black tracking-widest text-silver-500 group-focus-within:text-white transition-colors">The Vision</label>
+                <textarea rows={4} className="w-full bg-transparent border-b border-white/10 py-4 focus:border-white outline-none transition-all resize-none placeholder:text-zinc-700" placeholder="Briefly Describe Your Objective"></textarea>
               </div>
               
-              <button type="submit" className="w-full py-6 bg-white text-black font-black rounded-2xl hover:bg-silver transition-all text-sm tracking-widest">
+              <GlowButton type="submit" className="w-full py-6!">
                 Send Message
-              </button>
+              </GlowButton>
             </form>
           </motion.div>
         </div>

@@ -2,15 +2,14 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import GlowButton from "@/components/ui/GlowButton";
 import ThreeDVideoScannerCarousel from "@/components/framer/ThreeDVideoScannerCarousel";
-import ShaderBackground from "@/components/ui/ShaderBackground";
 
 export default function Hero() {
   return (
-    <section className="relative h-screen flex flex-col items-center justify-center overflow-hidden bg-transparent pt-32">
-      <ShaderBackground />
+    <section className="relative h-screen flex flex-col items-center justify-center overflow-hidden bg-transparent">
       {/* Primary Messaging - F-Shaped Pattern Focus */}
-      <div className="relative z-20 w-full max-w-7xl mx-auto px-6 text-left mb-12">
+      <div className="relative z-20 w-full max-w-7xl mx-auto px-6 text-left mb-12 mt-40">
         <motion.div
            initial={{ opacity: 0, y: 20 }}
            animate={{ opacity: 1, y: 0 }}
@@ -23,12 +22,8 @@ export default function Hero() {
             We Help You To Brand Yoursel
           </p>
           <div className="mt-12 flex space-x-6">
-            <button className="px-10 py-4 bg-white text-black font-black rounded-full hover:bg-silver transition-all text-sm tracking-widest uppercase">
-              View Works
-            </button>
-            <button className="px-10 py-4 border border-white/20 text-white font-black rounded-full hover:bg-white/10 transition-all text-sm tracking-widest uppercase">
-              Contact Us
-            </button>
+            <GlowButton>View Works</GlowButton>
+            <GlowButton variant="secondary">Contact Us</GlowButton>
           </div>
         </motion.div>
       </div>
