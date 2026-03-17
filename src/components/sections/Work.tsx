@@ -53,7 +53,7 @@ export default function Work() {
               </div>
               <div className="flex flex-col">
                 <span className="text-[12px] font-black tracking-widest text-silver block mb-4">
-                  ijStoriesStudio
+                  IJ Stories Studio
                 </span>
                 <div className="flex justify-between items-center">
                   <h3 className="text-3xl font-bold tracking-tight">{project.title}</h3>
