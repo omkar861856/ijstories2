@@ -1,55 +1,168 @@
 "use client";
 
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useEffect, useRef } from 'react';
+
+declare global {
+  interface Window {
+    THREE: any;
+  }
+}
 
 export default function ShaderBackground() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const sceneRef = useRef<any>({
+    camera: null,
+    scene: null,
+    renderer: null,
+    uniforms: null,
+    animationId: null
+  });
+
+  useEffect(() => {
+    const existingScript = document.querySelector('script[src="https://cdnjs.cloudflare.com/ajax/libs/three.js/89/three.min.js"]');
+    
+    const initThree = () => {
+      if (containerRef.current && window.THREE) {
+        initThreeJS();
+      }
+    };
+
+    if (!existingScript) {
+      const script = document.createElement("script");
+      script.src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/89/three.min.js";
+      script.onload = initThree;
+      document.head.appendChild(script);
+    } else {
+      initThree();
+    }
+
+    return () => {
+      if (sceneRef.current.animationId) cancelAnimationFrame(sceneRef.current.animationId);
+      if (sceneRef.current.renderer) sceneRef.current.renderer.dispose();
+      // Keep script to avoid reloading if component remounts, but original removed it.
+      // I'll stick to original behavior of cleanup if it was specific.
+    };
+  }, []);
+
+  const initThreeJS = () => {
+    if (!containerRef.current || !window.THREE) return;
+    
+    const THREE = window.THREE;
+    const container = containerRef.current;
+    
+    // Clear previous
+    container.innerHTML = "";
+
+    const camera = new THREE.Camera();
+    camera.position.z = 1;
+
+    const scene = new THREE.Scene();
+    const geometry = new THREE.PlaneBufferGeometry(2, 2);
+
+    // Params from original fragment shader
+    const params = {
+      backgroundColor: "#000000",
+      colorA: "#ffffff",
+      colorB: "#86868b",
+      colorIntensity: 1.2,
+      mosaicScale: { x: 8, y: 8 }
+    };
+
+    const uniforms = {
+      time: { type: "f", value: 1.0 },
+      resolution: { type: "v2", value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+      mosaicScale: { type: "v2", value: new THREE.Vector2(params.mosaicScale.x, params.mosaicScale.y) },
+      colorIntensity: { type: "f", value: params.colorIntensity },
+      colorA: { type: "v3", value: new THREE.Color(params.colorA) },
+      colorB: { type: "v3", value: new THREE.Color(params.colorB) },
+      bgColor: { type: "v3", value: new THREE.Color(params.backgroundColor) }
+    };
+
+    const vertexShader = `
+      void main() {
+        gl_Position = vec4(position, 1.0);
+      }
+    `;
+
+    const fragmentShader = `
+      #define PI 3.14159265359
+      precision highp float;
+
+      uniform vec2 resolution;
+      uniform float time;
+      uniform vec2 mosaicScale;
+      uniform float colorIntensity;
+      uniform vec3 colorA;
+      uniform vec3 colorB;
+      uniform vec3 bgColor;
+
+      float random (in float x) { return fract(sin(x)*1e4); }
+      float random (vec2 st) { return fract(sin(dot(st.xy, vec2(12.9898,78.233)))* 43758.5453123); }
+
+      void main(void) {
+        vec2 uv = (gl_FragCoord.xy * 2.0 - resolution.xy) / min(resolution.x, resolution.y);
+
+        vec2 fMosaicScal = mosaicScale;
+        vec2 vScreenSize = vec2(256.0,256.0);
+
+        uv.x = floor(uv.x * vScreenSize.x / fMosaicScal.x) / (vScreenSize.x / fMosaicScal.x);
+        uv.y = floor(uv.y * vScreenSize.y / fMosaicScal.y) / (vScreenSize.y / fMosaicScal.y);
+
+        float t = time * 0.06 + random(uv.x) * 0.4;
+        float lineWidth = 0.0008;
+
+        float intensity = 0.0;
+        for(int j = 0; j < 3; j++) {
+          for(int i = 0; i < 5; i++) {
+            intensity += lineWidth * float(i*i) / abs(fract(t - 0.01*float(j) + float(i)*0.01) - length(uv));
+          }
+        }
+
+        vec3 lineColor = mix(colorA, colorB, 0.5 + 0.5*sin(time*0.5 + uv.x * 3.1415));
+        vec3 finalColor = bgColor + intensity * lineColor * colorIntensity;
+
+        gl_FragColor = vec4(finalColor, 1.0);
+      }
+    `;
+
+    const material = new THREE.ShaderMaterial({
+      uniforms: uniforms,
+      vertexShader: vertexShader,
+      fragmentShader: fragmentShader
+    });
+
+    const mesh = new THREE.Mesh(geometry, material);
+    scene.add(mesh);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    container.appendChild(renderer.domElement);
+
+    sceneRef.current.renderer = renderer;
+    sceneRef.current.uniforms = uniforms;
+
+    const animate = (t: number) => {
+      sceneRef.current.uniforms.time.value = t / 1000.0;
+      renderer.render(scene, camera);
+      sceneRef.current.animationId = requestAnimationFrame(animate);
+    };
+    animate(0);
+
+    const handleResize = () => {
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      sceneRef.current.uniforms.resolution.value.set(window.innerWidth, window.innerHeight);
+    };
+    window.addEventListener('resize', handleResize);
+  };
+
   return (
     <div className="fixed inset-0 -z-50 overflow-hidden pointer-events-none bg-black">
-      {/* Mesh Gradient Layers */}
-      <motion.div
-        animate={{
-          x: [0, 100, 0, -100, 0],
-          y: [0, -100, 100, 0, 0],
-          scale: [1, 1.2, 1, 0.8, 1],
-        }}
-        transition={{
-          duration: 25,
-          repeat: Infinity,
-          ease: "linear",
-        }}
-        className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full opacity-20 bg-[radial-gradient(circle,rgba(210,210,215,0.4)_0%,transparent_70%)] blur-[100px]"
+      <div 
+        ref={containerRef} 
+        className="absolute inset-0 opacity-40" 
+        style={{ mixBlendMode: 'screen' }}
       />
-      <motion.div
-        animate={{
-          x: [0, -150, 0, 150, 0],
-          y: [0, 150, -150, 0, 0],
-          rotate: [0, 180, 360],
-        }}
-        transition={{
-          duration: 35,
-          repeat: Infinity,
-          ease: "linear",
-        }}
-        className="absolute bottom-[-20%] right-[-10%] w-[70%] h-[70%] rounded-full opacity-15 bg-[radial-gradient(circle,rgba(134,134,139,0.3)_0%,transparent_70%)] blur-[120px]"
-      />
-      
-      {/* Grain / Noise Filter Overlay */}
-      <div className="absolute inset-0 opacity-[0.03] contrast-150 brightness-150 pointer-events-none mix-blend-overlay">
-        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-          <filter id="noiseFilter">
-            <feTurbulence 
-              type="fractalNoise" 
-              baseFrequency="0.65" 
-              numOctaves="3" 
-              stitchTiles="stitch" 
-            />
-          </filter>
-          <rect width="100%" height="100%" filter="url(#noiseFilter)" />
-        </svg>
-      </div>
-
-      {/* Vignette */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,black_100%)] opacity-40" />
     </div>
   );
