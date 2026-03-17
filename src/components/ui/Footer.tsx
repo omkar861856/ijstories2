@@ -3,14 +3,21 @@
 import React from "react";
 import Link from "next/link";
 import { Instagram, Twitter, Linkedin, Mail } from "lucide-react";
+import Image from "next/image";
 
 export default function Footer() {
   return (
     <footer className="bg-black border-t border-white/10 py-20">
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12">
         <div className="col-span-1 md:col-span-2">
-          <Link href="/" className="text-3xl font-bold tracking-tighter text-silver mb-6 block">
-            ij.stories<span className="text-white">.</span>
+          <Link href="/" className="mb-6 block">
+            <Image
+              src="/ijlogo.png"
+              alt="ij.stories logo"
+              width={150}
+              height={50}
+              className="h-12 w-auto object-contain"
+            />
           </Link>
           <p className="text-silver-400 text-lg max-w-sm">
             Pushing the boundaries of art and design to create unforgettable digital experiences.
@@ -18,11 +25,11 @@ export default function Footer() {
         </div>
 
         <div>
-          <h4 className="text-white font-bold mb-6">Quick Links</h4>
-          <ul className="space-y-4">
-            {["About", "Services", "Work", "Pricing", "Blog"].map((item) => (
+          <h4 className="text-white font-bold mb-8 text-2xl tracking-widest">quickLinks</h4>
+          <ul className="space-y-6">
+            {["about", "services", "work", "pricing", "blog"].map((item) => (
               <li key={item}>
-                <Link href={`#${item.toLowerCase()}`} className="text-silver-400 hover:text-white transition-colors">
+                <Link href={`#${item.toLowerCase()}`} className="text-silver-400 hover:text-silver transition-colors text-xl font-medium tracking-wide">
                   {item}
                 </Link>
               </li>
@@ -31,29 +38,29 @@ export default function Footer() {
         </div>
 
         <div>
-          <h4 className="text-white font-bold mb-6">Connect</h4>
-          <div className="flex space-x-6">
+          <h4 className="text-white font-bold mb-8 text-2xl tracking-widest">connect</h4>
+          <div className="flex space-x-8">
             <Link href="#" className="text-silver-400 hover:text-white transition-colors">
-              <Instagram size={24} />
+              <Instagram size={28} />
             </Link>
             <Link href="#" className="text-silver-400 hover:text-white transition-colors">
-              <Twitter size={24} />
+              <Twitter size={28} />
             </Link>
             <Link href="#" className="text-silver-400 hover:text-white transition-colors">
-              <Linkedin size={24} />
+              <Linkedin size={28} />
             </Link>
             <Link href="#" className="text-silver-400 hover:text-white transition-colors">
-              <Mail size={24} />
+              <Mail size={28} />
             </Link>
           </div>
         </div>
       </div>
       
-      <div className="max-w-7xl mx-auto px-6 mt-20 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-silver-500 text-sm">
-        <p>© 2026 ij.stories. All rights reserved.</p>
-        <div className="flex space-x-8 mt-4 md:mt-0">
-          <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>
-          <Link href="#" className="hover:text-white transition-colors">Terms of Service</Link>
+      <div className="max-w-7xl mx-auto px-6 mt-20 pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-silver-500 text-sm font-medium tracking-widest">
+        <p>© 2026 ijStories. allRightsReserved.</p>
+        <div className="flex space-x-10 mt-6 md:mt-0">
+          <Link href="#" className="hover:text-white transition-colors">privacyPolicy</Link>
+          <Link href="#" className="hover:text-white transition-colors">termsOfService</Link>
         </div>
       </div>
     </footer>

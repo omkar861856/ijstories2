@@ -4,15 +4,16 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 const navLinks = [
-  { name: "Home", href: "#" },
-  { name: "About", href: "#about" },
-  { name: "Services", href: "#services" },
-  { name: "Work", href: "#work" },
-  { name: "Pricing", href: "#pricing" },
-  { name: "Blog", href: "#blog" },
-  { name: "Contact", href: "#contact" },
+  { name: "home", href: "#" },
+  { name: "about", href: "#about" },
+  { name: "services", href: "#services" },
+  { name: "work", href: "#work" },
+  { name: "pricing", href: "#pricing" },
+  { name: "blog", href: "#blog" },
+  { name: "contact", href: "#contact" },
 ];
 
 export default function Navbar() {
@@ -34,8 +35,15 @@ export default function Navbar() {
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-        <Link href="/" className="text-2xl font-bold tracking-tighter text-silver">
-          ij.stories<span className="text-white">.</span>
+        <Link href="/" className="flex items-center">
+          <Image
+            src="/ijlogo.png"
+            alt="ij.stories logo"
+            width={180}
+            height={60}
+            className="h-14 w-auto object-contain"
+            priority
+          />
         </Link>
 
         {/* Desktop Nav */}
@@ -44,16 +52,16 @@ export default function Navbar() {
             <Link
               key={link.name}
               href={link.href}
-              className="text-sm font-medium text-silver-400 hover:text-white transition-colors"
+              className="text-lg font-bold text-silver-400 hover:text-silver transition-all tracking-widest px-2"
             >
               {link.name}
             </Link>
           ))}
           <Link
             href="#contact"
-            className="px-5 py-2 bg-white text-black text-sm font-bold rounded-full hover:bg-silver-200 transition-colors"
+            className="px-8 py-3 bg-white text-black text-sm font-black rounded-full hover:bg-silver-200 transition-colors"
           >
-            Get in Touch
+            getInTouch
           </Link>
         </div>
 

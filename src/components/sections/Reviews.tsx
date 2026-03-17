@@ -30,9 +30,9 @@ export default function Reviews() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-4xl md:text-5xl font-black tracking-tighter text-center mb-24"
+          className="text-6xl md:text-[7rem] font-black tracking-tight text-center mb-32"
         >
-          CLIENT <span className="text-silver">FEEDBACK</span>
+          client<span className="text-silver">Feedback</span>
         </motion.h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -50,12 +50,12 @@ export default function Reviews() {
                   <Star key={i} size={16} fill="currentColor" />
                 ))}
               </div>
-              <p className="text-silver-400 text-lg italic mb-10 leading-relaxed">
+              <p className="text-white/80 text-xl italic mb-10 leading-relaxed font-light">
                 &quot;{review.content}&quot;
               </p>
               <div>
-                <h4 className="font-bold text-white tracking-tight">{review.name}</h4>
-                <p className="text-silver-500 text-xs font-black uppercase tracking-widest mt-1">{review.role}</p>
+                <h4 className="font-bold text-white tracking-widest text-2xl">{review.name.replace(/ /g, "")}</h4>
+                <p className="text-silver-200 text-sm font-black tracking-widest mt-2">{review.role.replace(/ /g, "")}</p>
               </div>
             </motion.div>
           ))}

@@ -1,17 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/ui/Navbar";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import SplashScreen from "@/components/ui/SplashScreen";
 
 export const metadata: Metadata = {
   title: "ij.stories | Premium Art & Design Agency",
@@ -26,11 +16,14 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black text-white`}
+        className="antialiased bg-black text-white"
       >
+        <SplashScreen />
         <Navbar />
         <main>{children}</main>
       </body>
     </html>
   );
 }
+
+

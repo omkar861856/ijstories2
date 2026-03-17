@@ -1,13 +1,20 @@
+/* @tailwind base; */
+/* @tailwind components; */
+/* @tailwind utilities; */
 @import "tailwindcss";
+
+/* Disable lint warnings for Tailwind v4 @theme */
+/* @layer base, components, utilities; */
+
 
 @theme {
   --color-silver-100: #f5f5f7;
   --color-silver-200: #e5e5e7;
   --color-silver-300: #d2d2d7;
-  --color-silver-400: #86868b;
-  --color-silver-500: #6e6e73;
+  --color-silver-400: #a2a2a7;
+  --color-silver-500: #86868b;
   --color-silver-600: #424245;
-  --color-silver-gradient: linear-gradient(135deg, #f5f5f7 0%, #d2d2d7 50%, #86868b 100%);
+  --color-silver-shiny: linear-gradient(90deg, #d2d2d7 0%, #ffffff 50%, #d2d2d7 100%);
 }
 
 :root {
@@ -20,9 +27,24 @@
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
   overflow-x: hidden;
+  letter-spacing: -0.01em;
+  line-height: 1.6;
+  font-size: 20px;
 }
+
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: -0.02em;
+  font-weight: 800;
+  text-transform: none; /* Ensure no auto caps */
+}
+
+h1 { font-size: 5rem; }
+h2 { font-size: 4rem; }
+h3 { font-size: 3rem; }
+h4 { font-size: 2rem; }
+
 
 @layer base {
   * {
@@ -31,9 +53,18 @@ body {
 }
 
 .text-silver {
-  background: linear-gradient(180deg, #ffffff 0%, #d2d2d7 100%);
+  background: linear-gradient(90deg, #86868b 0%, #d2d2d7 25%, #ffffff 50%, #d2d2d7 75%, #86868b 100%);
+  background-size: 200% auto;
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
+  animation: shine 5s linear infinite;
+}
+
+@keyframes shine {
+  to {
+    background-position: 200% center;
+  }
 }
 
 .bg-silver-gradient {

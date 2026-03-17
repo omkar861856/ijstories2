@@ -20,13 +20,13 @@ export default function Work() {
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="text-5xl md:text-7xl font-black tracking-tighter uppercase"
+              className="text-7xl md:text-[8rem] font-black tracking-tight leading-[0.9]"
             >
-              SELECTED <br />
-              <span className="text-silver">WORKS</span>
+              selected <br />
+              <span className="text-silver">works</span>
             </motion.h2>
           </div>
-          <p className="text-silver-400 max-w-sm text-right hidden md:block italic uppercase text-[10px] tracking-[0.2em] font-black">
+          <p className="text-silver-100 max-w-sm text-right hidden md:block italic text-[14px] tracking-wide font-medium opacity-70">
             A curated selection of our most ambitious projects where art meets strategic design.
           </p>
         </div>
@@ -51,9 +51,14 @@ export default function Work() {
                   <span className="text-white font-bold border-b border-white uppercase tracking-widest text-xs">View Case Study</span>
                 </div>
               </div>
-              <div className="flex justify-between items-center">
-                <h3 className="text-2xl font-bold tracking-tight uppercase">{project.title}</h3>
-                <span className="text-silver-500 uppercase text-[10px] font-black tracking-widest">{project.category}</span>
+              <div className="flex flex-col">
+                <span className="text-[12px] font-black tracking-widest text-silver block mb-4">
+                  ijStoriesStudio
+                </span>
+                <div className="flex justify-between items-center">
+                  <h3 className="text-3xl font-bold tracking-tight">{project.title.toLowerCase()}</h3>
+                  <span className="text-silver text-[12px] font-black tracking-widest">{project.category.replace(/ /g, "")}</span>
+                </div>
               </div>
             </motion.div>
           ))}
